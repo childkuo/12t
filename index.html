@@ -350,23 +350,39 @@
     .house-h { background: #fef9e7; border-color: #ecd178; color: #7a5c00; }
     .house-s { background: #eef7f2; border-color: #9cd4b5; color: #165938; }
 
-    /* Chocolate Frog Wizard Cards Album */
+    /* Chocolate Frog Wizard Cards Album (Clickable Quiz Portals!) */
     .cards-album {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
       margin-top: 12px;
     }
 
     .frog-card {
-      border-radius: 16px;
-      padding: 14px 12px;
+      border-radius: 18px;
+      padding: 16px 12px 14px;
       text-align: center;
       border: 2px solid #cbb9a1;
       background: #f5efe6;
       color: var(--muted);
-      transition: all 0.3s;
+      transition: all 0.22s ease;
       position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .frog-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 20px rgba(85, 65, 45, 0.14);
+    }
+
+    .frog-card:active {
+      transform: scale(0.98);
     }
 
     .frog-card.unlocked {
@@ -376,10 +392,29 @@
       box-shadow: 0 6px 18px rgba(78, 50, 97, 0.25);
     }
 
-    .frog-card .fc-icon { font-size: 2rem; margin-bottom: 4px; display: block; }
-    .frog-card .fc-title { font-weight: 700; font-size: 0.95rem; display: block; }
+    .frog-card .fc-icon { font-size: 2rem; display: block; }
+    .frog-card .fc-title { font-weight: 700; font-size: 0.96rem; display: block; }
     .frog-card.unlocked .fc-title { color: #ffe394; }
-    .frog-card .fc-desc { font-size: 0.78rem; margin-top: 4px; opacity: 0.88; }
+    .frog-card .fc-desc { font-size: 0.78rem; opacity: 0.9; }
+
+    .fc-action-pill {
+      margin-top: 4px;
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: #fff;
+      color: #a85616;
+      border: 1.5px solid #e8b931;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .frog-card.unlocked .fc-action-pill {
+      background: rgba(255, 227, 148, 0.18);
+      color: #ffe394;
+      border-color: rgba(255, 227, 148, 0.55);
+    }
 
     /* Section 1 */
     .time-chars-grid {
@@ -854,6 +889,30 @@
     @keyframes spinHand { to { transform: rotate(360deg); } }
 
     /* Section 4: Quiz Arena */
+    .quiz-mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #f2eadf;
+      padding: 10px 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      border: 1.5px solid #d5c5af;
+    }
+    .quiz-mode-title { font-weight: 800; color: #4e3261; font-size: 0.94rem; }
+    .quiz-switch-btn {
+      background: #fff;
+      border: 1.5px solid #cbb9a1;
+      padding: 5px 12px;
+      border-radius: 18px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+    }
+
     .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-size: 0.94rem; }
     .quiz-q {
       font-size: 1.12rem;
@@ -1074,30 +1133,30 @@
       </svg>
 
       <div class="header-text">
-        <div class="badge">⚡ 零基礎魔法英文 2.0｜點字會翻譯＋有聲收集遊戲</div>
+        <div class="badge">⚡ 零基礎魔法英文 2.0｜點卡立即測驗＋有聲收集遊戲</div>
         <h1>MahiMahi好吃實驗室｜魔法 12 大時態</h1>
-        <p>跟著哈利、妙麗和榮恩一起玩轉「動態時態」、抽搞笑魔法句、收集 4 張巧克力蛙巫師卡！</p>
+        <p>跟著哈利、妙麗和榮恩一起玩轉「動態時態」、抽搞笑魔法句、點擊收集 4 張巧克力蛙巫師卡！</p>
       </div>
     </div>
   </header>
 
   <nav class="nav-tabs">
-    <button class="nav-btn active" onclick="switchTab('intro', this)">
+    <button class="nav-btn active" data-tab="intro" onclick="switchTab('intro', this)">
       <span class="nav-icon">🪄</span>
       <span class="nav-full">1. 魔法入門 & 巫師卡冊</span>
       <span class="nav-short">入門/卡冊</span>
     </button>
-    <button class="nav-btn" onclick="switchTab('map', this)">
+    <button class="nav-btn" data-tab="map" onclick="switchTab('map', this)">
       <span class="nav-icon">⏳</span>
       <span class="nav-full">2. 動態時光器地圖</span>
       <span class="nav-short">時光地圖</span>
     </button>
-    <button class="nav-btn" onclick="switchTab('lab', this)">
+    <button class="nav-btn" data-tab="lab" onclick="switchTab('lab', this)">
       <span class="nav-icon">🧪</span>
       <span class="nav-full">3. MahiMahi好吃實驗室</span>
       <span class="nav-short">搞笑實驗室</span>
     </button>
-    <button class="nav-btn" onclick="switchTab('quiz', this)">
+    <button class="nav-btn" data-tab="quiz" onclick="switchTab('quiz', this)">
       <span class="nav-icon">🦉</span>
       <span class="nav-full">4. 魔法偵探大挑戰</span>
       <span class="nav-short">偵探測驗</span>
@@ -1105,11 +1164,11 @@
   </nav>
 
   <main class="container">
-    <!-- SECTION 1: INTRO + WIZARD CARD ALBUM -->
+    <!-- SECTION 1: INTRO + CLICKABLE WIZARD CARD ALBUM -->
     <section id="intro" class="section active">
       <div class="card">
-        <h2 class="sec-title">🍫 我的巧克力蛙巫師卡冊（邊學邊解鎖！）</h2>
-        <p style="font-size:0.88rem; color:var(--muted);">完成對應的學習任務，就能收集 4 張閃亮亮的霍格華茲巫師卡，並獲得額外學院積分！</p>
+        <h2 class="sec-title">🍫 我的巧克力蛙巫師卡冊（點擊卡片直接開始測驗！）</h2>
+        <p style="font-size:0.88rem; color:var(--muted);">每一張卡片都是一個專屬魔法關卡！<strong>直接點選任一張卡片就能馬上測驗並解鎖</strong>，還可賺取額外學院積分喔！</p>
         <div class="cards-album" id="cards-album"></div>
       </div>
 
@@ -1225,7 +1284,7 @@
 
         <div class="map-header">
           <div class="map-banner">📜 霍格華茲國中三年修業地圖</div>
-          <p class="map-sub">「我莊嚴宣誓，我沒有不懷好意！」—— 跟著羊皮紙腳印，去分頁 2 解鎖卡片吧！</p>
+          <p class="map-sub">「我莊嚴宣誓，我沒有不懷好意！」—— 跟著羊皮紙腳印，三年級前依序解鎖時態魔法吧！</p>
         </div>
 
         <div class="roadmap-trail">
@@ -1445,6 +1504,13 @@
     <section id="quiz" class="section">
       <div class="card">
         <h2 class="sec-title">🦉 霍格華茲時間偵探大挑戰</h2>
+
+        <!-- Current Quiz Mode Banner -->
+        <div class="quiz-mode-bar">
+          <span class="quiz-mode-title" id="quiz-mode-label">🏆 目前關卡：鄧不利多的金探子卡（全範圍 8 題大挑戰）</span>
+          <button class="quiz-switch-btn" id="quiz-all-btn" style="display:none;" onclick="startCardQuiz('all', false)">切換回全部 8 題 🔄</button>
+        </div>
+
         <div class="teacher-bubble-wrap">
           <svg width="76" height="76" viewBox="0 0 90 90" style="flex-shrink:0;">
             <defs>
@@ -1505,7 +1571,6 @@
       sound: true,
       visitedTenses: [],
       labPlays: 0,
-      quizPerfect: false,
       cards: []
     };
 
@@ -1570,7 +1635,7 @@
       t.textContent = msg;
       t.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
     }
 
     function addPoints(pts, reason = '') {
@@ -1599,10 +1664,10 @@
     }
 
     const CARDS_META = [
-      { id: 'g1', icon: '📚', title: '妙麗的魔法筆記卡', desc: '看懂國一 2 個基礎時態即可解鎖' },
-      { id: 'g2', icon: '🧹', title: '哈利的飛天掃帚卡', desc: '看懂國二 3 個核心時態即可解鎖' },
-      { id: 'lab', icon: '🐸', title: '榮恩的巧克力蛙卡', desc: '在好吃實驗室造句 3 次即可解鎖' },
-      { id: 'quiz', icon: '🏆', title: '鄧不利多的金探子卡', desc: '時間偵探測驗拿到 100 分解鎖' }
+      { id: 'g1', icon: '📚', title: '妙麗的魔法筆記卡', desc: '國一基礎 3 題小測驗（現在簡單 / 現在進行）', btnText: '🪄 點此挑戰國一測驗 (3題)' },
+      { id: 'g2', icon: '🧹', title: '哈利的飛天掃帚卡', desc: '國二核心 3 題小測驗（過去 / 未來時態）', btnText: '🪄 點此挑戰國二測驗 (3題)' },
+      { id: 'lab', icon: '🐸', title: '榮恩的巧克力蛙卡', desc: '好吃實驗室 3 題美食測驗（或實驗室造句3次）', btnText: '🪄 點此挑戰美食測驗 (3題)' },
+      { id: 'quiz', icon: '🏆', title: '鄧不利多的金探子卡', desc: '霍格華茲全範圍 8 題終極挑戰', btnText: '🪄 點此挑戰總複習 (8題)' }
     ];
 
     function unlockCard(cardId) {
@@ -1622,10 +1687,13 @@
       box.innerHTML = CARDS_META.map(c => {
         const has = gameState.cards.includes(c.id);
         return `
-          <div class="frog-card ${has ? 'unlocked' : ''}">
-            <span class="fc-icon">${has ? c.icon : '🔒'}</span>
-            <span class="fc-title">${has ? c.title : '??? 未解鎖巫師卡'}</span>
-            <div class="fc-desc">${has ? '✨ 已收集進霍格華茲卡冊！' : c.desc}</div>
+          <div class="frog-card ${has ? 'unlocked' : ''}" onclick="startCardQuiz('${c.id}', true)">
+            <div>
+              <span class="fc-icon">${has ? c.icon : '🔒'}</span>
+              <span class="fc-title">${has ? c.title : '??? 未解鎖巫師卡'}</span>
+              <div class="fc-desc">${c.desc}</div>
+            </div>
+            <span class="fc-action-pill">${has ? '✨ 已解鎖｜點此再玩測驗' : c.btnText}</span>
           </div>
         `;
       }).join('');
@@ -2304,78 +2372,149 @@
     }
 
     // ========================
-    // 4. QUIZ ARENA (CLUE HINT + MISTAKE FIXER)
+    // 4. QUIZ ARENA (CARD-SPECIFIC MINI QUIZZES + FULL 8-Q QUIZ)
     // ========================
     const QUESTIONS = [
+      // 0: G1
       {
-        qHtml: `1. Hermione _______ ${w('magic books', '魔法書')} <span class="clue-target">every day</span>. (國一必考)`,
+        qHtml: `Hermione _______ ${w('magic books', '魔法書')} <span class="clue-target">every day</span>. (國一必考)`,
         clueMsg: '🔍 線索字是「every day（每天）」！代表每天都會做的習慣，要用哪種時態？',
         opts: ['study', 'studies', 'is studying', 'studied'],
         ans: 1,
         exp: '「every day」代表習慣，要用現在簡單式！主詞 Hermione 是第三人稱單數，study 要去 y 加 ies → studies。'
       },
+      // 1: G1
       {
-        qHtml: `2. <span class="clue-target">Look!</span> Harry _______ on his ${w('broomstick', '飛天掃帚')} <span class="clue-target">right now</span>!`,
+        qHtml: `<span class="clue-target">Look!</span> Harry _______ on his ${w('broomstick', '飛天掃帚')} <span class="clue-target">right now</span>!`,
         clueMsg: '🔍 線索字是「Look!（看！）」和「right now（就在此刻）」，代表動作正在發生中！',
         opts: ['flies', 'flew', 'is flying', 'will fly'],
         ans: 2,
         exp: '「Look!」跟「right now」代表哈利此刻「正在」飛，要用現在進行式 (is + V-ing)！'
       },
+      // 2: G2
       {
-        qHtml: `3. Hagrid _______ a big ${w('birthday cake', '生日蛋糕')} to Harry <span class="clue-target">yesterday</span>.`,
+        qHtml: `Hagrid _______ a big ${w('birthday cake', '生日蛋糕')} to Harry <span class="clue-target">yesterday</span>.`,
         clueMsg: '🔍 線索字是「yesterday（昨天）」！事情昨天已經發生完囉。',
         opts: ['brings', 'brought', 'is bringing', 'will bring'],
         ans: 1,
         exp: '「yesterday」要用過去簡單式。bring（帶來）的過去式是不規則變化：brought！'
       },
+      // 3: G2
       {
-        qHtml: `4. We _______ to Hogwarts by ${w('train', '火車')} <span class="clue-target">next September</span>.`,
+        qHtml: `We _______ to Hogwarts by ${w('train', '火車')} <span class="clue-target">next September</span>.`,
         clueMsg: '🔍 線索字是「next September（明年九月）」！還沒發生的未來計畫喔。',
         opts: ['went', 'go', 'will go', 'are going'],
         ans: 2,
         exp: '「next September」代表還沒發生的未來，要用未來式 will go。'
       },
+      // 4: G2
       {
-        qHtml: `5. Ron _______ ${w('Chocolate Frogs', '巧克力蛙')} <span class="clue-target">at 8:00 last night</span>.`,
+        qHtml: `Ron _______ ${w('Chocolate Frogs', '巧克力蛙')} <span class="clue-target">at 8:00 last night</span>.`,
         clueMsg: '🔍 看到明確的過去時間點「at 8:00 last night（昨晚八點整）」，強調那時候「正在」吃！',
         opts: ['eats', 'was eating', 'is eating', 'has eaten'],
         ans: 1,
         exp: '過去某個特定時刻「正在」進行的動作，要用過去進行式：was eating！'
       },
+      // 5: G3
       {
-        qHtml: `6. I _______ <span class="clue-target">already</span> _______ my ${w('Potions', '魔藥學')} homework. Let's play!`,
+        qHtml: `I _______ <span class="clue-target">already</span> _______ my ${w('Potions', '魔藥學')} homework. Let's play!`,
         clueMsg: '🔍 看到「already（已經）」，而且強調現在已經完成、可以去玩了！',
         opts: ['have / finished', 'has / finished', 'am / finishing', 'did / finish'],
         ans: 0,
         exp: '看到「already」且表示已經完成，要用現在完成式 (have/has + p.p.)，主詞 I 要搭配 have。'
       },
+      // 6: G3
       {
-        qHtml: `7. Harry _______ at Hogwarts <span class="clue-target">since he was eleven</span>.`,
+        qHtml: `Harry _______ at Hogwarts <span class="clue-target">since he was eleven</span>.`,
         clueMsg: '🔍 看到「since（自從⋯⋯以來）」是國三大魔王線索！代表從過去一直持續到現在。',
         opts: ['lives', 'lived', 'has lived', 'is living'],
         ans: 2,
         exp: '「since」代表從過去一路持續到現在，要用現在完成式 has lived。'
       },
+      // 7: G2/G3
       {
-        qHtml: `8. <span class="clue-target">When Professor McGonagall walked in</span>, the ${w('twins', '雙胞胎')} _______ a joke.`,
+        qHtml: `<span class="clue-target">When Professor McGonagall walked in</span>, the ${w('twins', '雙胞胎')} _______ a joke.`,
         clueMsg: '🔍 當教授「走進來的那一刻（過去式 walked）」，雙胞胎當時「正在」講笑話（而且 twins 是兩個人喔）！',
         opts: ['tell', 'were telling', 'are telling', 'will tell'],
         ans: 1,
         exp: '一個過去動作發生時，另一個正在進行的動作用過去進行式。twins 是複數，所以用 were telling。'
+      },
+      // 8: Extra G1 (for Card 1)
+      {
+        qHtml: `I _______ ${w('Chocolate Frogs', '巧克力蛙')} <span class="clue-target">every weekend</span>.`,
+        clueMsg: '🔍 主詞是 I（我），時間是「every weekend（每個週末）」的習慣，動詞要加 s 嗎？',
+        opts: ['eats', 'eat', 'am eating', 'ate'],
+        ans: 1,
+        exp: '現在簡單式只有「第三人稱單數 (He/She/單人)」才要 +s！主詞是 I，所以保持原形 eat 就好！'
+      },
+      // 9: Extra Lab (for Card 3)
+      {
+        qHtml: `<span class="clue-target">Look!</span> Dobby _______ ${w('MahiMahi fish burgers', '鬼頭刀魚排堡')} <span class="clue-target">right now</span>!`,
+        clueMsg: '🔍 看到「Look!」與「right now」，Dobby 只有一隻小精靈（單數），要用哪個 be 動詞 + V-ing？',
+        opts: ['eat', 'eats', 'is eating', 'are eating'],
+        ans: 2,
+        exp: '此刻正在進行要用現在進行式 (be + V-ing)，Dobby 是單數，所以搭配 is eating！'
+      },
+      // 10: Extra Lab (for Card 3)
+      {
+        qHtml: `Harry and Ron _______ ${w('Cauldron Cakes', '大釜蛋糕')} under the Sorting Hat <span class="clue-target">yesterday</span>.`,
+        clueMsg: '🔍 看到「yesterday（昨天）」，還記得 eat 的不規則過去式長什麼樣子嗎？',
+        opts: ['eat', 'ate', 'eaten', 'will eat'],
+        ans: 1,
+        exp: 'eat 的三態是 eat - ate - eaten。昨天的過去簡單式要用 ate！'
+      },
+      // 11: Extra Lab (for Card 3)
+      {
+        qHtml: `Hermione _______ ${w("Bertie Bott's Beans", '柏蒂怪味豆')} in Snape's class <span class="clue-target">tomorrow</span>.`,
+        clueMsg: '🔍 看到「tomorrow（明天）」還沒發生的未來，助動詞 will 後面要接什麼？',
+        opts: ['will eat', 'will eats', 'ate', 'is eating'],
+        ans: 0,
+        exp: '未來簡單式用 will + 原形動詞，所以選 will eat！'
       }
     ];
 
-    let activeIndices = QUESTIONS.map((_, i) => i);
+    const QUIZ_MODES = {
+      g1:   { title: '📚 卡片關卡：妙麗的魔法筆記卡（國一 3 題）', indices: [0, 1, 8], cardId: 'g1' },
+      g2:   { title: '🧹 卡片關卡：哈利的飛天掃帚卡（國二 3 題）', indices: [2, 3, 4], cardId: 'g2' },
+      lab:  { title: '🐸 卡片關卡：榮恩的巧克力蛙卡（美食造句 3 題）', indices: [9, 10, 11], cardId: 'lab' },
+      quiz: { title: '🏆 卡片關卡：鄧不利多的金探子卡（全範圍 8 題）', indices: [0, 1, 2, 3, 4, 5, 6, 7], cardId: 'quiz' },
+      all:  { title: '🏆 霍格華茲總複習：全範圍 8 題大挑戰', indices: [0, 1, 2, 3, 4, 5, 6, 7], cardId: 'quiz' }
+    };
+
+    let currentQuizMode = 'all';
+    let activeIndices = [...QUIZ_MODES.all.indices];
     let qPos = 0;
     let wrongIndices = [];
     let correctCount = 0;
+
+    function startCardQuiz(mode, switchToQuizTab = true) {
+      playSound('click');
+      const cfg = QUIZ_MODES[mode] || QUIZ_MODES.all;
+      currentQuizMode = mode;
+      activeIndices = [...cfg.indices];
+      wrongIndices = [];
+      qPos = 0;
+      correctCount = 0;
+
+      document.getElementById('quiz-mode-label').textContent = cfg.title;
+      document.getElementById('quiz-all-btn').style.display = (mode === 'all' || mode === 'quiz') ? 'none' : 'inline-block';
+      document.getElementById('quiz-area').style.display = 'block';
+      document.getElementById('quiz-result').style.display = 'none';
+
+      loadQuestion();
+
+      if (switchToQuizTab) {
+        const quizTabBtn = document.querySelector('.nav-btn[data-tab="quiz"]');
+        switchTab('quiz', quizTabBtn);
+      }
+    }
 
     function loadQuestion() {
       const realIdx = activeIndices[qPos];
       const q = QUESTIONS[realIdx];
       document.getElementById('q-progress').textContent = `第 ${qPos + 1} 題 / 共 ${activeIndices.length} 題`;
       document.getElementById('q-score').textContent = `本輪答對：${correctCount} 題`;
-      document.getElementById('q-text').innerHTML = q.qHtml;
+      document.getElementById('q-text').innerHTML = `${qPos + 1}. ${q.qHtml}`;
       document.getElementById('q-feedback').style.display = 'none';
       document.getElementById('q-next').style.display = 'none';
       document.getElementById('q-hint-msg').style.display = 'none';
@@ -2449,19 +2588,24 @@
       const pct = Math.round((correctCount / total) * 100);
       document.getElementById('wax-score-txt').textContent = `${pct}分`;
 
+      const cfg = QUIZ_MODES[currentQuizMode] || QUIZ_MODES.all;
       const actDiv = document.getElementById('result-actions');
+
       if (wrongIndices.length === 0) {
-        document.getElementById('result-title').textContent = '🎉 完美通關！獲得霍格華茲學院盃！';
+        document.getElementById('result-title').textContent = '🎉 完美通關！關卡任務達成！';
         document.getElementById('final-score-text').textContent = `太強了！全部 ${total} 題 100% 通關！`;
         launchConfetti();
-        unlockCard('quiz');
-        actDiv.innerHTML = `<button class="next-btn" onclick="restartQuiz()">重新挑戰全部 8 題 🔄</button>`;
+        unlockCard(cfg.cardId);
+        actDiv.innerHTML = `
+          <button class="next-btn fix-btn" onclick="switchTab('intro', document.querySelector('.nav-btn[data-tab=intro]'))">🃏 回卡冊看新卡片</button>
+          <button class="next-btn" onclick="restartQuiz()">再玩一次 🔄</button>
+        `;
       } else {
-        document.getElementById('result-title').textContent = '🦉 差一步就拿滿分囉！';
+        document.getElementById('result-title').textContent = '🦉 差一步就解鎖卡片囉！';
         document.getElementById('final-score-text').textContent = `本輪答對 ${correctCount} / ${total} 題（還有 ${wrongIndices.length} 題小迷糊）。`;
         actDiv.innerHTML = `
           <button class="next-btn fix-btn" onclick="retryWrong()">🪄 消滅錯題魔法陣（只重練錯的 ${wrongIndices.length} 題！）</button>
-          <button class="next-btn" onclick="restartQuiz()">全部重頭挑戰 🔄</button>
+          <button class="next-btn" onclick="restartQuiz()">本關重頭挑戰 🔄</button>
         `;
       }
     }
@@ -2478,14 +2622,7 @@
     }
 
     function restartQuiz() {
-      playSound('click');
-      activeIndices = QUESTIONS.map((_, i) => i);
-      wrongIndices = [];
-      qPos = 0;
-      correctCount = 0;
-      document.getElementById('quiz-area').style.display = 'block';
-      document.getElementById('quiz-result').style.display = 'none';
-      loadQuestion();
+      startCardQuiz(currentQuizMode, false);
     }
 
     // ========================
@@ -2496,7 +2633,7 @@
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       if (tabId === 'map') replayTimeline();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
