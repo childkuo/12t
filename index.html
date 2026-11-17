@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>霍格華茲英文救星｜MahiMahi好吃實驗室：12 大時態教室</title>
+  <title>霍格華茲英文救星 2.0｜MahiMahi好吃實驗室</title>
   <style>
     :root {
       --bg: #f6efe2;
@@ -46,11 +46,19 @@
       padding-bottom: 60px;
     }
 
-    /* Header: Deep Starry Hogwarts Night */
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Header */
     header {
       background: radial-gradient(circle at 20% 20%, #3d2c5e 0%, #1d263b 55%, #121726 100%);
       color: white;
-      padding: 24px 18px 44px;
+      padding: 18px 18px 44px;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
       box-shadow: 0 12px 30px rgba(18, 23, 38, 0.28);
@@ -58,13 +66,49 @@
       overflow: hidden;
     }
 
+    /* Top Status Bar */
+    .status-bar {
+      max-width: 1120px;
+      margin: 0 auto 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 227, 148, 0.45);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .status-pill:hover { background: rgba(255, 255, 255, 0.24); }
+    .status-pill.gold { color: #ffe394; cursor: default; }
+
     .header-inner {
       max-width: 1120px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 22px;
+      gap: 20px;
       flex-wrap: wrap;
       position: relative;
       z-index: 2;
@@ -94,21 +138,19 @@
       padding: 3px 13px;
       border-radius: 20px;
       font-size: 0.8rem;
-      margin-bottom: 7px;
-      letter-spacing: 0.6px;
+      margin-bottom: 6px;
       font-weight: 600;
     }
 
     header h1 {
-      font-size: clamp(1.32rem, 3.4vw, 2.05rem);
+      font-size: clamp(1.3rem, 3.4vw, 2.05rem);
       margin-bottom: 6px;
       line-height: 1.3;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
     header p {
       opacity: 0.92;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #e4e9f2;
     }
 
@@ -141,11 +183,7 @@
       gap: 6px;
     }
 
-    .nav-btn:hover {
-      transform: translateY(-2px);
-      border-color: var(--gold);
-    }
-
+    .nav-btn:hover { transform: translateY(-2px); border-color: var(--gold); }
     .nav-btn.active {
       background: linear-gradient(135deg, #c97a28 0%, #a85616 100%);
       color: #fff;
@@ -162,14 +200,8 @@
       padding: 0 16px;
     }
 
-    .section {
-      display: none;
-      animation: fadeIn 0.28s ease;
-    }
-
-    .section.active {
-      display: block;
-    }
+    .section { display: none; animation: fadeIn 0.28s ease; }
+    .section.active { display: block; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
@@ -187,7 +219,7 @@
     }
 
     h2.sec-title {
-      font-size: 1.26rem;
+      font-size: 1.24rem;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
@@ -211,10 +243,148 @@
       font-size: 0.92rem;
     }
 
-    /* Section 1: 3 Realistic Magic Artifacts */
+    /* Tap-to-translate Word */
+    .tap-word {
+      border-bottom: 2px dotted #2a9d8f;
+      cursor: pointer;
+      padding: 0 2px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      display: inline-block;
+    }
+    .tap-word:hover, .tap-word:active {
+      background: #e3f3f0;
+    }
+
+    #word-popover {
+      position: fixed;
+      z-index: 9500;
+      background: #24304a;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 14px;
+      border: 1.5px solid #ffe394;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+      font-size: 0.88rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      max-width: 280px;
+      animation: popBounce 0.25s ease;
+    }
+
+    /* Toast Notification */
+    #magic-toast {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, #2d3a54 0%, #5c3d6e 100%);
+      color: #ffe394;
+      border: 2px solid #ffe394;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      z-index: 9800;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center;
+      white-space: nowrap;
+      max-width: 92vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #magic-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* House Selection Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 23, 38, 0.72);
+      backdrop-filter: blur(4px);
+      z-index: 9900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+
+    .modal-card {
+      background: #fffcf5;
+      border: 3px solid #c99749;
+      border-radius: 24px;
+      padding: 24px 20px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      animation: popBounce 0.35s ease;
+    }
+
+    .houses-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .house-btn {
+      padding: 14px 10px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .house-btn:hover { transform: translateY(-2px); border-color: var(--gold); }
+    .house-g { background: #fdf2f2; border-color: #e8b0b0; color: #8c1919; }
+    .house-r { background: #f0f5fa; border-color: #a8c7e0; color: #1b4965; }
+    .house-h { background: #fef9e7; border-color: #ecd178; color: #7a5c00; }
+    .house-s { background: #eef7f2; border-color: #9cd4b5; color: #165938; }
+
+    /* Chocolate Frog Wizard Cards Album */
+    .cards-album {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .frog-card {
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: center;
+      border: 2px solid #cbb9a1;
+      background: #f5efe6;
+      color: var(--muted);
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .frog-card.unlocked {
+      background: linear-gradient(145deg, #2d3a54 0%, #4e3261 100%);
+      border: 2px solid #ffd166;
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(78, 50, 97, 0.25);
+    }
+
+    .frog-card .fc-icon { font-size: 2rem; margin-bottom: 4px; display: block; }
+    .frog-card .fc-title { font-weight: 700; font-size: 0.95rem; display: block; }
+    .frog-card.unlocked .fc-title { color: #ffe394; }
+    .frog-card .fc-desc { font-size: 0.78rem; margin-top: 4px; opacity: 0.88; }
+
+    /* Section 1 */
     .time-chars-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 14px;
       margin: 16px 0;
     }
@@ -224,15 +394,11 @@
       padding: 16px 14px;
       text-align: center;
       border: 1.5px solid transparent;
-      transition: transform 0.2s;
       box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
-
-    .char-box:hover { transform: translateY(-3px); }
     .char-past { background: linear-gradient(180deg, #fdf2ef 0%, #f9e0da 100%); border-color: #e7b5a9; }
     .char-now { background: linear-gradient(180deg, #eef8f6 0%, #daf0ec 100%); border-color: #a8d8d0; }
     .char-future { background: linear-gradient(180deg, #eff5fa 0%, #dceaf5 100%); border-color: #afcbe0; }
-
     .char-box h4 { margin: 6px 0 4px; font-size: 1.04rem; }
     .char-box p { font-size: 0.85rem; color: var(--muted); }
 
@@ -250,20 +416,12 @@
       text-align: center;
     }
 
-    .pill {
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
+    .pill { padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
     .pill-time { background: #dff2ef; color: #175c53; }
     .pill-aspect { background: #e1edf6; color: #224b6b; }
     .pill-res { background: #fae2dc; color: #9c3324; }
 
-    /* =============================================
-       HOGWARTS PARCHMENT TREASURE MAP
-       ============================================= */
+    /* Parchment Map */
     .parchment-map {
       position: relative;
       border-radius: 22px;
@@ -273,9 +431,7 @@
         linear-gradient(90deg, transparent 66.2%, rgba(110, 75, 35, 0.08) 66.5%, rgba(255, 250, 235, 0.25) 66.9%, transparent 67.5%),
         radial-gradient(ellipse at center, #f6ead2 0%, #ead6b0 68%, #d7bc8e 100%);
       border: 3px solid #9d7b4f;
-      box-shadow:
-        inset 0 0 45px rgba(120, 80, 35, 0.32),
-        0 12px 28px rgba(60, 40, 18, 0.16);
+      box-shadow: inset 0 0 45px rgba(120, 80, 35, 0.32), 0 12px 28px rgba(60, 40, 18, 0.16);
       overflow: hidden;
       margin-bottom: 20px;
     }
@@ -300,12 +456,7 @@
       opacity: 0.72;
     }
 
-    .map-header {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      margin-bottom: 22px;
-    }
+    .map-header { position: relative; z-index: 2; text-align: center; margin-bottom: 22px; }
 
     .map-banner {
       display: inline-block;
@@ -316,16 +467,10 @@
       border: 2px solid #d4a024;
       font-size: 1.15rem;
       font-weight: 800;
-      letter-spacing: 1px;
       box-shadow: 0 4px 12px rgba(45, 26, 10, 0.25);
     }
 
-    .map-sub {
-      color: #5c4028;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-top: 8px;
-    }
+    .map-sub { color: #5c4028; font-size: 0.9rem; font-weight: 600; margin-top: 8px; }
 
     .roadmap-trail {
       position: relative;
@@ -338,8 +483,7 @@
 
     .map-node {
       position: relative;
-      background: rgba(255, 251, 240, 0.9);
-      backdrop-filter: blur(2px);
+      background: rgba(255, 251, 240, 0.92);
       border: 2px solid #8c663c;
       border-radius: 16px;
       padding: 18px 16px 16px;
@@ -366,8 +510,6 @@
 
     .node-badge {
       display: inline-flex;
-      align-items: center;
-      gap: 6px;
       font-size: 0.78rem;
       font-weight: 800;
       padding: 3px 10px;
@@ -378,20 +520,8 @@
     .nb-1 { background: #2c6e91; }
     .nb-2 { background: #2a7b5c; }
     .nb-3 { background: #6b3b7d; }
-
-    .map-node h3 {
-      font-size: 1.08rem;
-      color: #3d2412;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .map-node ul {
-      padding-left: 18px;
-      font-size: 0.88rem;
-      color: #4a3525;
-    }
+    .map-node h3 { font-size: 1.08rem; color: #3d2412; }
+    .map-node ul { padding-left: 18px; font-size: 0.88rem; color: #4a3525; }
 
     .map-wax-seal {
       position: absolute;
@@ -402,7 +532,7 @@
       filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.3));
     }
 
-    /* Section 2: SIDE-BY-SIDE Interactive Map & Timeline */
+    /* Section 2 */
     .map-top-bar {
       display: flex;
       flex-wrap: wrap;
@@ -412,12 +542,7 @@
       margin-bottom: 14px;
     }
 
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 
     .filter-chip {
       padding: 6px 12px;
@@ -427,14 +552,8 @@
       cursor: pointer;
       font-size: 0.82rem;
       font-weight: 600;
-      transition: all 0.15s;
     }
-
-    .filter-chip.active {
-      background: #2d3a54;
-      color: #fff;
-      border-color: #2d3a54;
-    }
+    .filter-chip.active { background: #2d3a54; color: #fff; border-color: #2d3a54; }
 
     .map-split-layout {
       display: grid;
@@ -445,12 +564,7 @@
 
     .mobile-time-header { display: none; }
 
-    .tense-matrix {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 7px;
-    }
-
+    .tense-matrix { width: 100%; border-collapse: separate; border-spacing: 7px; }
     .tense-matrix th {
       padding: 8px 6px;
       border-radius: 12px;
@@ -458,7 +572,6 @@
       background: #f2eadf;
       text-align: center;
     }
-
     .th-past { background: var(--past-bg) !important; color: var(--past); }
     .th-now { background: var(--now-bg) !important; color: var(--now); }
     .th-future { background: var(--future-bg) !important; color: var(--future); }
@@ -474,21 +587,23 @@
       position: relative;
       vertical-align: middle;
     }
-
-    .tense-cell:hover {
-      transform: translateY(-2px);
-      border-color: var(--gold);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-    }
-
+    .tense-cell:hover { transform: translateY(-2px); border-color: var(--gold); }
     .tense-cell.selected {
       border-color: #5c3d6e;
       background: #fff9e6;
       box-shadow: 0 4px 14px rgba(92, 61, 110, 0.2);
       transform: scale(1.02);
     }
-
     .tense-cell.dimmed { opacity: 0.3; }
+    .tense-cell.visited::before {
+      content: "✓";
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 0.72rem;
+      color: #2b8a3e;
+      font-weight: 900;
+    }
     .tense-cell .t-name { font-weight: 700; font-size: 0.9rem; display: block; line-height: 1.25; }
     .tense-cell .t-en { font-size: 0.7rem; color: var(--muted); display: block; margin: 2px 0 4px; }
 
@@ -504,9 +619,7 @@
     .tag-g3 { background: #f3d9fa; color: #862e9c; }
     .tag-adv { background: #f1f3f5; color: #495057; }
 
-    /* =============================================
-       DYNAMIC ANIMATIONS FOR TIMELINE & TEXT (圖文動態)
-       ============================================= */
+    /* Dynamic Detail Panel */
     .detail-panel {
       position: sticky;
       top: 18px;
@@ -517,86 +630,34 @@
       box-shadow: 0 6px 20px rgba(60, 40, 18, 0.08);
     }
 
-    /* Staggered text entrance animations */
-    .anim-slide-up {
-      animation: slideUpFade 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
+    .anim-slide-up { animation: slideUpFade 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
     .anim-delay-1 { animation-delay: 0.06s; }
     .anim-delay-2 { animation-delay: 0.14s; }
     .anim-delay-3 { animation-delay: 0.22s; }
-    .anim-delay-4 { animation-delay: 0.3s; }
 
     @keyframes slideUpFade {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* SVG Timeline Animations */
-    .svg-draw-arc {
-      stroke-dasharray: 220;
-      stroke-dashoffset: 220;
-      animation: drawStroke 0.9s ease-out forwards;
-    }
+    .svg-draw-arc { stroke-dasharray: 220; stroke-dashoffset: 220; animation: drawStroke 0.9s ease-out forwards; }
+    @keyframes drawStroke { to { stroke-dashoffset: 0; } }
+    .svg-flow-dash { stroke-dasharray: 6, 5; animation: flowDash 1s linear infinite; }
+    @keyframes flowDash { to { stroke-dashoffset: -22; } }
 
-    @keyframes drawStroke {
-      to { stroke-dashoffset: 0; }
-    }
+    .svg-pop-point { transform-box: fill-box; transform-origin: center; animation: popBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    @keyframes popBounce { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-    .svg-flow-dash {
-      stroke-dasharray: 6, 5;
-      animation: flowDash 1s linear infinite;
-    }
+    .svg-ripple { transform-box: fill-box; transform-origin: center; animation: rippleOut 1.8s ease-out infinite; }
+    @keyframes rippleOut { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
 
-    @keyframes flowDash {
-      to { stroke-dashoffset: -22; }
-    }
+    .svg-now-pulse { animation: nowPulse 2s ease-in-out infinite; }
+    @keyframes nowPulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 
-    .svg-pop-point {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: popBounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    }
+    .svg-habit-x { opacity: 0; transform-box: fill-box; transform-origin: center; animation: popBounce 0.35s ease-out forwards; }
 
-    @keyframes popBounce {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .svg-ripple {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: rippleOut 1.8s ease-out infinite;
-    }
-
-    @keyframes rippleOut {
-      0% { transform: scale(0.8); opacity: 0.8; }
-      100% { transform: scale(2.6); opacity: 0; }
-    }
-
-    .svg-now-pulse {
-      animation: nowPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes nowPulse {
-      0%, 100% { opacity: 0.55; }
-      50% { opacity: 1; }
-    }
-
-    .svg-habit-x {
-      opacity: 0;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: popBounce 0.35s ease-out forwards;
-    }
-
-    .snitch-flap-l {
-      transform-origin: 26px 36px;
-      animation: flapL 0.45s ease-in-out infinite alternate;
-    }
-    .snitch-flap-r {
-      transform-origin: 44px 36px;
-      animation: flapR 0.45s ease-in-out infinite alternate;
-    }
+    .snitch-flap-l { transform-origin: 26px 36px; animation: flapL 0.45s ease-in-out infinite alternate; }
+    .snitch-flap-r { transform-origin: 44px 36px; animation: flapR 0.45s ease-in-out infinite alternate; }
     @keyframes flapL { from { transform: rotate(0deg); } to { transform: rotate(-16deg); } }
     @keyframes flapR { from { transform: rotate(0deg); } to { transform: rotate(16deg); } }
 
@@ -609,9 +670,7 @@
       font-weight: 700;
       color: #5c4028;
       cursor: pointer;
-      transition: background 0.15s;
     }
-    .replay-btn:hover { background: #eadbc6; }
 
     .mobile-back-btn {
       display: none;
@@ -632,24 +691,11 @@
       border-radius: 14px;
       padding: 10px 12px;
       border: 1.5px solid var(--border);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-align: center;
-      position: relative;
     }
-
-    .timeline-box-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .timeline-box svg {
-      width: 100%;
-      height: 122px;
-      display: block;
-      margin: 0 auto;
-    }
+    .timeline-box-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .timeline-box svg { width: 100%; height: 120px; display: block; margin: 0 auto; }
 
     .formula-pill {
       display: inline-block;
@@ -658,10 +704,20 @@
       padding: 7px 12px;
       border-radius: 10px;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin: 6px 0;
       width: 100%;
       word-break: break-word;
+    }
+
+    .daily-life-box {
+      background: #fff4e0;
+      border-left: 4px solid #d9822b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      color: #5c3a16;
+      margin: 8px 0;
     }
 
     .example-box {
@@ -670,7 +726,7 @@
       border-left: 5px solid var(--now);
       padding: 12px;
       border-radius: 12px;
-      margin-top: 12px;
+      margin-top: 10px;
       display: flex;
       gap: 12px;
       align-items: center;
@@ -685,36 +741,31 @@
       border-bottom: 2px solid #d9822b;
       animation: verbShimmer 2.4s linear infinite;
     }
+    @keyframes verbShimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
-    @keyframes verbShimmer {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
+    .speak-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 
     .speak-btn {
       background: linear-gradient(135deg, #2a9d8f 0%, #1e7c71 100%);
       color: #fff;
       border: none;
-      padding: 8px 16px;
+      padding: 7px 13px;
       border-radius: 22px;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      min-height: 38px;
-      box-shadow: 0 3px 8px rgba(30, 124, 113, 0.25);
+      gap: 4px;
+      min-height: 36px;
+    }
+    .speak-btn.slow {
+      background: #f2eadf;
+      color: #4a3525;
+      border: 1.5px solid #cbb9a1;
     }
 
-    .keywords-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
+    .keywords-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .kw-badge {
       background: #f2eadf;
       padding: 3px 10px;
@@ -726,44 +777,45 @@
       animation: popBounce 0.35s ease-out forwards;
     }
 
-    /* Section 3: Sentence Builder Lab */
+    /* Section 3: Funny Lab */
     .builder-controls {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
-    .control-group label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-    }
-
-    .btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .control-group label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.88rem; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
 
     .opt-btn {
-      padding: 9px 13px;
-      min-height: 40px;
+      padding: 8px 11px;
+      min-height: 38px;
       border: 1.5px solid #cbb9a1;
       background: #fff;
       border-radius: 12px;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      transition: all 0.15s;
     }
+    .opt-btn.active { background: #4e3261; color: #ffe394; border-color: #4e3261; }
 
-    .opt-btn.active {
-      background: #4e3261;
-      color: #ffe394;
-      border-color: #4e3261;
+    .dice-btn {
+      background: linear-gradient(135deg, #d9822b 0%, #b55416 100%);
+      color: #fff;
+      border: 2px solid #ffe394;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(181, 84, 22, 0.3);
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
+    .dice-btn:active { transform: scale(0.96); }
 
     .lab-output {
       background: linear-gradient(135deg, #fbf4e4 0%, #ffffff 100%);
@@ -775,7 +827,6 @@
       justify-content: center;
       gap: 22px;
       flex-wrap: wrap;
-      box-shadow: inset 0 0 24px rgba(201, 151, 73, 0.12);
     }
 
     .lab-scene-box {
@@ -788,80 +839,53 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 16px rgba(27, 34, 52, 0.25);
       flex-shrink: 0;
     }
 
-    .lab-text-box {
-      flex: 1;
-      min-width: 240px;
-      text-align: center;
-    }
+    .lab-text-box { flex: 1; min-width: 240px; text-align: center; }
+    .lab-sentence { font-size: clamp(1.15rem, 2.6vw, 1.65rem); font-weight: 700; margin: 8px 0; color: #24304a; }
+    .lab-zh { font-size: 1rem; color: var(--muted); margin-bottom: 10px; }
 
-    .lab-sentence {
-      font-size: clamp(1.2rem, 2.8vw, 1.75rem);
-      font-weight: 700;
-      margin: 8px 0;
-      color: #24304a;
-    }
-
-    .lab-zh {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    /* Animated SVG helpers inside Lab */
-    .frog-hop {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: frogHop 0.7s ease-in-out infinite alternate;
-    }
-    @keyframes frogHop {
-      from { transform: translateY(0) rotate(-15deg); }
-      to { transform: translateY(-9px) rotate(-6deg); }
-    }
-    .candle-flicker {
-      animation: candleFlicker 1.4s ease-in-out infinite alternate;
-    }
-    @keyframes candleFlicker {
-      from { opacity: 0.7; }
-      to { opacity: 1; }
-    }
-    .clock-spin {
-      transform-origin: 176px 70px;
-      animation: spinHand 3s linear infinite;
-    }
-    @keyframes spinHand {
-      to { transform: rotate(360deg); }
-    }
+    .frog-hop { transform-box: fill-box; transform-origin: center; animation: frogHop 0.7s ease-in-out infinite alternate; }
+    @keyframes frogHop { from { transform: translateY(0) rotate(-15deg); } to { transform: translateY(-9px) rotate(-6deg); } }
+    .candle-flicker { animation: candleFlicker 1.4s ease-in-out infinite alternate; }
+    @keyframes candleFlicker { from { opacity: 0.7; } to { opacity: 1; } }
+    .clock-spin { transform-origin: 176px 70px; animation: spinHand 3s linear infinite; }
+    @keyframes spinHand { to { transform: rotate(360deg); } }
 
     /* Section 4: Quiz Arena */
-    .quiz-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
+    .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-size: 0.94rem; }
     .quiz-q {
       font-size: 1.12rem;
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding: 16px;
       background: #f9f3e8;
       border: 1.5px solid var(--border);
       border-radius: 14px;
     }
-
-    .quiz-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
+    .clue-highlight {
+      background: #ffe066;
+      padding: 1px 6px;
+      border-radius: 6px;
+      border: 1.5px solid #d9822b;
+      animation: popBounce 0.35s ease;
     }
-
+    .hint-btn {
+      background: #fff9db;
+      border: 1.5px solid #e8b931;
+      color: #6b4e00;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
     .quiz-opt {
       padding: 14px 16px;
       min-height: 48px;
@@ -871,26 +895,11 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
       text-align: left;
     }
-
-    .quiz-opt:hover:not(:disabled) {
-      border-color: var(--gold);
-      background: #fffaf0;
-    }
-
-    .quiz-opt.correct {
-      background: #d3f9d8;
-      border-color: #2b8a3e;
-      color: #1b5e20;
-    }
-
-    .quiz-opt.wrong {
-      background: #ffe3e3;
-      border-color: #c92a2a;
-      color: #a61e1e;
-    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--gold); background: #fffaf0; }
+    .quiz-opt.correct { background: #d3f9d8; border-color: #2b8a3e; color: #1b5e20; }
+    .quiz-opt.wrong { background: #ffe3e3; border-color: #c92a2a; color: #a61e1e; }
 
     .quiz-feedback {
       margin-top: 14px;
@@ -915,6 +924,11 @@
       font-size: 0.95rem;
       min-height: 44px;
     }
+    .next-btn.fix-btn {
+      background: linear-gradient(135deg, #862e9c 0%, #5c3d6e 100%);
+      color: #fff;
+      margin-right: 8px;
+    }
 
     /* =============================================
        iPHONE & MOBILE RESPONSIVE POLISH
@@ -923,75 +937,36 @@
       .map-split-layout { grid-template-columns: 1fr; }
       .detail-panel { position: static; }
       .mobile-back-btn { display: block; }
-
-      .roadmap-trail {
-        grid-template-columns: 1fr;
-        gap: 26px;
-      }
+      .roadmap-trail { grid-template-columns: 1fr; gap: 26px; }
       .map-node:not(:last-child)::after {
-        content: "👣 ⬇";
-        right: auto;
-        left: 50%;
-        top: auto;
-        bottom: -23px;
-        transform: translateX(-50%);
+        content: "👣 ⬇"; right: auto; left: 50%; top: auto; bottom: -23px; transform: translateX(-50%);
       }
     }
 
     @media (max-width: 768px) {
-      body {
-        padding-bottom: calc(86px + env(safe-area-inset-bottom));
-      }
-
-      header {
-        padding: 18px 14px 22px;
-        border-bottom-left-radius: 24px;
-        border-bottom-right-radius: 24px;
-      }
-
+      body { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+      header { padding: 14px 12px 22px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
       .header-inner { gap: 10px; }
-      .header-illust { width: 104px; height: 80px; }
+      .header-illust { width: 96px; height: 74px; }
       .header-text { text-align: center; }
-      header p { font-size: 0.84rem; }
+      header p { font-size: 0.82rem; }
+      .status-bar { justify-content: center; }
 
       .nav-tabs {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 0;
-        max-width: 100%;
+        position: fixed; bottom: 0; left: 0; right: 0; margin: 0; max-width: 100%;
         background: rgba(255, 253, 249, 0.95);
-        -webkit-backdrop-filter: blur(14px);
-        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
         border-top: 1.5px solid var(--border);
         padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
-        gap: 4px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        gap: 4px; display: grid; grid-template-columns: repeat(4, 1fr);
         box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
       }
-
       .nav-btn {
-        flex-direction: column;
-        justify-content: center;
-        padding: 6px 2px;
-        border-radius: 14px;
-        border: none;
-        background: transparent;
-        box-shadow: none;
-        font-size: 0.72rem;
-        gap: 2px;
-        color: var(--muted);
+        flex-direction: column; justify-content: center; padding: 6px 2px; border-radius: 14px;
+        border: none; background: transparent; box-shadow: none; font-size: 0.72rem; gap: 2px; color: var(--muted);
       }
-
       .nav-btn:hover { transform: none; }
-      .nav-btn.active {
-        background: #fcf1df;
-        color: #a85616;
-        border: none;
-      }
-
+      .nav-btn.active { background: #fcf1df; color: #a85616; border: none; }
       .nav-btn .nav-full { display: none; }
       .nav-btn .nav-short { display: block; }
       .nav-btn .nav-icon { font-size: 1.25rem; line-height: 1; }
@@ -1001,66 +976,21 @@
       .parchment-map { padding: 20px 16px 46px; }
       h2.sec-title { font-size: 1.15rem; }
 
-      .teacher-bubble-wrap {
-        flex-direction: column;
-        align-items: center;
-        text-align: left;
-        gap: 10px;
-      }
-
+      .teacher-bubble-wrap { flex-direction: column; align-items: center; text-align: left; gap: 10px; }
       .time-chars-grid { grid-template-columns: 1fr; gap: 10px; }
+      .char-box { display: flex; align-items: center; text-align: left; gap: 12px; padding: 12px; }
+      .char-box svg { width: 68px; height: 68px; flex-shrink: 0; }
 
-      .char-box {
-        display: flex;
-        align-items: center;
-        text-align: left;
-        gap: 12px;
-        padding: 12px;
-      }
+      .mobile-time-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 6px; }
+      .mobile-time-header div { text-align: center; font-size: 0.78rem; font-weight: 700; padding: 6px 4px; border-radius: 10px; }
 
-      .char-box svg {
-        width: 70px;
-        height: 70px;
-        flex-shrink: 0;
-      }
-
-      .mobile-time-header {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        margin-bottom: 6px;
-      }
-
-      .mobile-time-header div {
-        text-align: center;
-        font-size: 0.78rem;
-        font-weight: 700;
-        padding: 6px 4px;
-        border-radius: 10px;
-      }
-
-      .tense-matrix,
-      .tense-matrix tbody { display: block; width: 100%; }
+      .tense-matrix, .tense-matrix tbody { display: block; width: 100%; }
       .tense-matrix thead { display: none; }
-
-      .tense-matrix tr {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        margin-bottom: 10px;
-      }
-
+      .tense-matrix tr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
       .tense-matrix tr th {
-        grid-column: 1 / -1;
-        text-align: left;
-        padding: 5px 10px;
-        font-size: 0.8rem;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        grid-column: 1 / -1; text-align: left; padding: 5px 10px; font-size: 0.8rem;
+        border-radius: 8px; display: flex; align-items: center; gap: 8px;
       }
-
       .tense-matrix tr th br { display: none; }
       .tense-cell { padding: 8px 4px; border-radius: 12px; }
       .tense-cell .t-name { font-size: 0.78rem; }
@@ -1069,67 +999,84 @@
       .example-box { flex-direction: column; align-items: flex-start; }
       .opt-btn { flex: 1 1 auto; text-align: center; }
       .quiz-options { grid-template-columns: 1fr; }
-      .next-btn { width: 100%; }
+      .next-btn { width: 100%; margin-right: 0; }
     }
   </style>
 </head>
 <body>
 
+  <canvas id="confetti-canvas"></canvas>
+  <div id="magic-toast">✨ 獲得 +10 學院分！</div>
+  <div id="word-popover">
+    <span id="popover-text"></span>
+    <button onclick="speakPopoverWord()" style="background:#ffe394;color:#24304a;border:none;border-radius:10px;padding:3px 9px;font-weight:700;cursor:pointer;">🔊</button>
+  </div>
+
+  <!-- 分類帽分院歡迎彈窗 -->
+  <div class="modal-backdrop" id="house-modal">
+    <div class="modal-card">
+      <div style="font-size:2.6rem;">🎩</div>
+      <h2 style="margin-bottom:6px;">歡迎來到霍格華茲！</h2>
+      <p style="font-size:0.92rem; color:var(--muted);">請選擇你想加入的學院，學習時態和破關就能幫學院賺取積分喔！</p>
+      <div class="houses-grid">
+        <button class="house-btn house-g" onclick="chooseHouse('🦁 葛來分多')"><span>🦁</span>葛來分多<small style="font-weight:400;">勇敢冒險</small></button>
+        <button class="house-btn house-r" onclick="chooseHouse('🦅 雷文克勞')"><span>🦅</span>雷文克勞<small style="font-weight:400;">聰明智慧</small></button>
+        <button class="house-btn house-h" onclick="chooseHouse('🦡 赫夫帕夫')"><span>🦡</span>赫夫帕夫<small style="font-weight:400;">親切努力</small></button>
+        <button class="house-btn house-s" onclick="chooseHouse('🐍 史萊哲林')"><span>🐍</span>史萊哲林<small style="font-weight:400;">聰敏果斷</small></button>
+      </div>
+    </div>
+  </div>
+
   <header>
+    <div class="status-bar">
+      <div class="status-group">
+        <button class="status-pill" id="house-pill" onclick="openHouseModal()">🎩 選擇學院</button>
+        <div class="status-pill gold" id="points-pill">🏆 積分：0</div>
+        <div class="status-pill gold" id="cards-pill">🃏 巫師卡：0/4</div>
+      </div>
+      <button class="status-pill" id="sound-pill" onclick="toggleSound()">🔊 魔法音效：開</button>
+    </div>
+
     <div class="header-inner">
-      <svg class="header-illust" width="142" height="106" viewBox="0 0 180 135">
+      <svg class="header-illust" width="136" height="100" viewBox="0 0 180 135">
         <defs>
           <radialGradient id="goldBall" cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#fff6c4"/>
-            <stop offset="40%" stop-color="#e8b931"/>
-            <stop offset="85%" stop-color="#9c6f12"/>
-            <stop offset="100%" stop-color="#5e4007"/>
+            <stop offset="0%" stop-color="#fff6c4"/><stop offset="40%" stop-color="#e8b931"/><stop offset="85%" stop-color="#9c6f12"/><stop offset="100%" stop-color="#5e4007"/>
           </radialGradient>
           <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
-            <stop offset="100%" stop-color="#cde2f5" stop-opacity="0.65"/>
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="100%" stop-color="#cde2f5" stop-opacity="0.65"/>
           </linearGradient>
           <radialGradient id="magicGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffe875" stop-opacity="0.95"/>
-            <stop offset="40%" stop-color="#f5a623" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="#f5a623" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#ffe875" stop-opacity="0.95"/><stop offset="40%" stop-color="#f5a623" stop-opacity="0.45"/><stop offset="100%" stop-color="#f5a623" stop-opacity="0"/>
           </radialGradient>
           <linearGradient id="potionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#58e3c7"/>
-            <stop offset="100%" stop-color="#176b5d"/>
+            <stop offset="0%" stop-color="#58e3c7"/><stop offset="100%" stop-color="#176b5d"/>
           </linearGradient>
           <linearGradient id="bookCover" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#7c2828"/>
-            <stop offset="100%" stop-color="#401010"/>
+            <stop offset="0%" stop-color="#7c2828"/><stop offset="100%" stop-color="#401010"/>
           </linearGradient>
         </defs>
-
         <path d="M22 92 L125 76 L152 104 L48 122 Z" fill="url(#bookCover)" stroke="#d4a024" stroke-width="2"/>
         <path d="M24 94 L48 122 L48 128 L22 98 Z" fill="#efe3c8" stroke="#8a724f" stroke-width="1"/>
         <path d="M48 122 L152 104 L152 111 L48 128 Z" fill="#e5d5b3" stroke="#8a724f" stroke-width="1"/>
         <ellipse cx="86" cy="98" rx="18" ry="8" fill="none" stroke="#e8b931" stroke-width="1.5"/>
-
         <rect x="115" y="48" width="12" height="10" rx="2" fill="#8b5a2b"/>
         <path d="M113 58 L129 58 L129 66 Q144 74 140 90 Q136 102 121 102 Q106 102 102 90 Q98 74 113 66 Z" fill="rgba(215, 248, 255, 0.28)" stroke="#cde8f5" stroke-width="1.5"/>
         <path d="M105 83 Q121 88 137 83 Q138 98 121 99 Q104 98 105 83 Z" fill="url(#potionGrad)"/>
-        <circle cx="114" cy="80" r="2" fill="#ffffff" opacity="0.7"/>
-
         <path d="M72 44 C52 24, 30 22, 22 30 C32 36, 48 42, 68 48 Z" fill="url(#wingGrad)" stroke="#a8c3db" stroke-width="1.2"/>
         <path d="M98 44 C118 24, 140 22, 148 30 C138 36, 122 42, 102 48 Z" fill="url(#wingGrad)" stroke="#a8c3db" stroke-width="1.2"/>
         <circle cx="85" cy="48" r="15" fill="url(#goldBall)" stroke="#704d0a" stroke-width="1"/>
         <path d="M72 45 Q85 53 98 45 M74 52 Q85 46 96 52" fill="none" stroke="#80580c" stroke-width="1.2" opacity="0.7"/>
-
         <circle cx="46" cy="44" r="22" fill="url(#magicGlow)" class="candle-flicker"/>
         <line x1="46" y1="44" x2="108" y2="92" stroke="#5e3a1e" stroke-width="5" stroke-linecap="round"/>
-        <line x1="46" y1="44" x2="108" y2="92" stroke="#a67244" stroke-width="1.5" stroke-linecap="round"/>
         <circle cx="46" cy="44" r="4" fill="#fffbe0"/>
         <path d="M36 22 L38 27 L43 29 L38 31 L36 36 L34 31 L29 29 L34 27 Z" fill="#fff4a8"/>
       </svg>
 
       <div class="header-text">
-        <div class="badge">⚡ 霍格華茲新生救星｜動態魔法手帳版</div>
+        <div class="badge">⚡ 零基礎魔法英文 2.0｜點字會翻譯＋有聲收集遊戲</div>
         <h1>MahiMahi好吃實驗室｜魔法 12 大時態</h1>
-        <p>跟著哈利、妙麗和榮恩一起吃巧克力蛙、喝奶油啤酒，用「動態時間軸 × 魔法動畫」一次打通國中英文時態！</p>
+        <p>跟著哈利、妙麗和榮恩一起玩轉「動態時態」、抽搞笑魔法句、收集 4 張巧克力蛙巫師卡！</p>
       </div>
     </div>
   </header>
@@ -1137,8 +1084,8 @@
   <nav class="nav-tabs">
     <button class="nav-btn active" onclick="switchTab('intro', this)">
       <span class="nav-icon">🪄</span>
-      <span class="nav-full">1. 魔法時態入門 (必看)</span>
-      <span class="nav-short">入門必看</span>
+      <span class="nav-full">1. 魔法入門 & 巫師卡冊</span>
+      <span class="nav-short">入門/卡冊</span>
     </button>
     <button class="nav-btn" onclick="switchTab('map', this)">
       <span class="nav-icon">⏳</span>
@@ -1148,7 +1095,7 @@
     <button class="nav-btn" onclick="switchTab('lab', this)">
       <span class="nav-icon">🧪</span>
       <span class="nav-full">3. MahiMahi好吃實驗室</span>
-      <span class="nav-short">好吃實驗室</span>
+      <span class="nav-short">搞笑實驗室</span>
     </button>
     <button class="nav-btn" onclick="switchTab('quiz', this)">
       <span class="nav-icon">🦉</span>
@@ -1158,17 +1105,21 @@
   </nav>
 
   <main class="container">
-    <!-- SECTION 1: INTRO -->
+    <!-- SECTION 1: INTRO + WIZARD CARD ALBUM -->
     <section id="intro" class="section active">
+      <div class="card">
+        <h2 class="sec-title">🍫 我的巧克力蛙巫師卡冊（邊學邊解鎖！）</h2>
+        <p style="font-size:0.88rem; color:var(--muted);">完成對應的學習任務，就能收集 4 張閃亮亮的霍格華茲巫師卡，並獲得額外學院積分！</p>
+        <div class="cards-album" id="cards-album"></div>
+      </div>
+
       <div class="card">
         <h2 class="sec-title">📖 為什麼麻瓜跟巫師要學 12 個時態？</h2>
         <div class="teacher-bubble-wrap">
           <svg width="78" height="78" viewBox="0 0 90 90" style="flex-shrink:0;">
             <defs>
               <radialGradient id="hatGrad" cx="40%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#8b5e3c"/>
-                <stop offset="65%" stop-color="#543620"/>
-                <stop offset="100%" stop-color="#2e1b0e"/>
+                <stop offset="0%" stop-color="#8b5e3c"/><stop offset="65%" stop-color="#543620"/><stop offset="100%" stop-color="#2e1b0e"/>
               </radialGradient>
             </defs>
             <circle cx="45" cy="45" r="41" fill="#f7ebd5" stroke="#9d7b4f" stroke-width="2.5"/>
@@ -1177,8 +1128,8 @@
             <path d="M33 48 Q42 52 51 47 M35 58 Q45 63 56 57" fill="none" stroke="#241409" stroke-width="2" stroke-linecap="round"/>
           </svg>
           <div class="teacher-tip" style="margin-bottom:0;">
-            <strong>分類帽與英文老師悄悄話：</strong> 中文靠「昨天、正在、已經、明天」表示時間，動詞都不會變（例：昨天<b>吃</b>巧克力蛙、現在正在<b>吃</b>）。<br>
-            但英文就像<strong>變形術</strong>！<strong>只要「時間」或「動作狀態」變了，動詞就要立刻施法變身！</strong>
+            <strong>分類帽與老師悄悄話：</strong> 中文靠「昨天、正在、已經、明天」表示時間，動詞都不會變。<br>
+            但英文就像<strong>變形術</strong>！<strong>只要「時間」或「動作狀態」變了，動詞就要換新衣服！</strong>（看不懂的英文單字點一下虛線就會告訴你中文喔！）
           </div>
         </div>
 
@@ -1187,9 +1138,7 @@
             <svg width="86" height="80" viewBox="0 0 100 90">
               <defs>
                 <linearGradient id="brass" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#fff0a8"/>
-                  <stop offset="45%" stop-color="#d49e2a"/>
-                  <stop offset="100%" stop-color="#7a530a"/>
+                  <stop offset="0%" stop-color="#fff0a8"/><stop offset="45%" stop-color="#d49e2a"/><stop offset="100%" stop-color="#7a530a"/>
                 </linearGradient>
               </defs>
               <path d="M28 10 Q50 -2 72 10" fill="none" stroke="url(#brass)" stroke-width="2" stroke-dasharray="3,2"/>
@@ -1197,8 +1146,7 @@
               <ellipse cx="50" cy="48" rx="22" ry="26" fill="none" stroke="url(#brass)" stroke-width="3.2" transform="rotate(-18 50 48)"/>
               <circle cx="50" cy="48" r="18" fill="rgba(255,255,255,0.45)" stroke="url(#brass)" stroke-width="2"/>
               <path d="M43 34 L57 34 L50 48 L57 62 L43 62 L50 48 Z" fill="rgba(220,242,255,0.6)" stroke="#7a530a" stroke-width="1.5"/>
-              <path d="M45 60 L55 60 L50 51 Z" fill="#e0a938"/>
-              <path d="M47 37 L53 37 L50 43 Z" fill="#e0a938"/>
+              <path d="M45 60 L55 60 L50 51 Z" fill="#e0a938"/><path d="M47 37 L53 37 L50 43 Z" fill="#e0a938"/>
               <path d="M16 48 L6 48 M6 48 L11 43 M6 48 L11 53" stroke="#b84232" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
             <div>
@@ -1211,14 +1159,11 @@
             <svg width="86" height="80" viewBox="0 0 100 90">
               <defs>
                 <radialGradient id="wandAura" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#9fffe0" stop-opacity="0.9"/>
-                  <stop offset="50%" stop-color="#2a9d8f" stop-opacity="0.4"/>
-                  <stop offset="100%" stop-color="#2a9d8f" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="#9fffe0" stop-opacity="0.9"/><stop offset="50%" stop-color="#2a9d8f" stop-opacity="0.4"/><stop offset="100%" stop-color="#2a9d8f" stop-opacity="0"/>
                 </radialGradient>
               </defs>
               <path d="M14 66 Q32 58 50 66 Q68 58 86 66 L82 78 Q65 71 50 78 Q35 71 18 78 Z" fill="#f7eed7" stroke="#6b4423" stroke-width="2"/>
               <line x1="50" y1="66" x2="50" y2="78" stroke="#6b4423" stroke-width="1.5"/>
-              <path d="M22 68 L42 66 M58 66 L78 68" stroke="#a68d71" stroke-width="1.5"/>
               <circle cx="72" cy="24" r="20" fill="url(#wandAura)" class="candle-flicker"/>
               <line x1="28" y1="54" x2="72" y2="24" stroke="#4a2c16" stroke-width="5" stroke-linecap="round"/>
               <circle cx="72" cy="24" r="4.5" fill="#ffffff"/>
@@ -1238,8 +1183,7 @@
               <ellipse cx="34" cy="48" rx="18" ry="22" fill="#ffffff" stroke="#8d99ae" stroke-width="1.8"/>
               <path d="M22 44 Q34 52 46 44 M24 54 Q34 60 44 54" fill="none" stroke="#ced4da" stroke-width="2"/>
               <circle cx="34" cy="26" r="14" fill="#ffffff" stroke="#8d99ae" stroke-width="1.8"/>
-              <circle cx="29" cy="25" r="3" fill="#f4a261" stroke="#3d352e" stroke-width="1"/>
-              <circle cx="39" cy="25" r="3" fill="#f4a261" stroke="#3d352e" stroke-width="1"/>
+              <circle cx="29" cy="25" r="3" fill="#f4a261" stroke="#3d352e" stroke-width="1"/><circle cx="39" cy="25" r="3" fill="#f4a261" stroke="#3d352e" stroke-width="1"/>
               <circle cx="29" cy="25" r="1.2" fill="#000"/><circle cx="39" cy="25" r="1.2" fill="#000"/>
               <polygon points="32,29 36,29 34,34" fill="#5c4738"/>
             </svg>
@@ -1258,17 +1202,9 @@
           <div style="font-size:1.3rem; font-weight:bold;">=</div>
           <div class="pill pill-res">12 種時態<br><small>先看時間，再看狀態！</small></div>
         </div>
-
-        <h3 style="margin-top:18px; margin-bottom:8px; font-size:1.05rem;">📌 4 種「魔法動作狀態」的白話文解釋：</h3>
-        <ul style="padding-left:20px; line-height:1.85; font-size:0.92rem;">
-          <li><strong>簡單式（Simple）</strong>：講「魔法習慣」或「單純發生過的一件事」。（例：妙麗每天都在霍格華茲學魔法。）</li>
-          <li><strong>進行式（Continuous）</strong>：強調當下「正在施法/動作中」，會看到 <code>be動詞 + V-ing</code>。（例：哈利現在正騎著飛天掃帚。）</li>
-          <li><strong>完成式（Perfect）</strong>：強調「已經做完了」或「經驗累積」，會看到 <code>have/has/had + p.p.</code>。（例：我今天已經喝了三杯奶油啤酒。）</li>
-          <li><strong>完成進行式（Perfect Continuous）</strong>：強調「一直持續做到現在還沒停」。（例：榮恩從午餐時間就一直吃巧克力蛙吃到現在！）</li>
-        </ul>
       </div>
 
-      <!-- 霍格華茲國中三年修業地圖 -->
+      <!-- 霍格華茲羊皮紙修業地圖 -->
       <div class="parchment-map">
         <svg class="map-bg-svg" viewBox="0 0 900 380" preserveAspectRatio="none">
           <g fill="rgba(110, 74, 38, 0.14)">
@@ -1276,14 +1212,11 @@
             <rect x="700" y="106" width="145" height="12"/>
           </g>
           <g fill="rgba(90, 72, 42, 0.13)">
-            <polygon points="35,340 50,290 65,340"/>
-            <polygon points="58,345 78,280 98,345"/>
-            <polygon points="90,342 108,298 126,342"/>
-            <polygon points="120,348 136,308 152,348"/>
+            <polygon points="35,340 50,290 65,340"/><polygon points="58,345 78,280 98,345"/>
+            <polygon points="90,342 108,298 126,342"/><polygon points="120,348 136,308 152,348"/>
           </g>
           <g transform="translate(65, 65)" stroke="rgba(110, 70, 32, 0.28)" fill="none">
             <circle cx="0" cy="0" r="34" stroke-width="1.5"/>
-            <circle cx="0" cy="0" r="26" stroke-width="1" stroke-dasharray="3,3"/>
             <polygon points="0,-38 7,-7 38,0 7,7 0,38 -7,7 -38,0 -7,-7" fill="rgba(120, 75, 35, 0.14)"/>
             <text x="0" y="-42" font-size="11" font-weight="bold" fill="rgba(105,65,30,0.45)" text-anchor="middle">N</text>
           </g>
@@ -1292,7 +1225,7 @@
 
         <div class="map-header">
           <div class="map-banner">📜 霍格華茲國中三年修業地圖</div>
-          <p class="map-sub">「我莊嚴宣誓，我沒有不懷好意！」—— 跟著羊皮紙腳印，三年級前依序解鎖時態魔法吧！</p>
+          <p class="map-sub">「我莊嚴宣誓，我沒有不懷好意！」—— 跟著羊皮紙腳印，去分頁 2 解鎖卡片吧！</p>
         </div>
 
         <div class="roadmap-trail">
@@ -1300,11 +1233,10 @@
             <span class="node-badge nb-1">第一站｜斜角巷入學</span>
             <h3>🌱 國一基礎篇</h3>
             <ul>
-              <li><strong>現在簡單式</strong>（魔法習慣、事實，三單記得 +s）</li>
-              <li><strong>現在進行式</strong>（現在正在施法，be + V-ing）</li>
+              <li><strong>現在簡單式</strong>（習慣、事實，三單 +s）</li>
+              <li><strong>現在進行式</strong>（現在正在做，be + V-ing）</li>
             </ul>
           </div>
-
           <div class="map-node">
             <span class="node-badge nb-2">第二站｜活米村冒險</span>
             <h3>🧭 國二關鍵篇</h3>
@@ -1314,12 +1246,11 @@
               <li><strong>未來簡單式</strong>（明天會做的事 will）</li>
             </ul>
           </div>
-
           <div class="map-node">
             <span class="node-badge nb-3">終點站｜霍格華茲巔峰</span>
             <h3>🏆 國三魔王篇</h3>
             <ul>
-              <li><strong>現在完成式</strong>（經驗、已經完成、持續到現在）</li>
+              <li><strong>現在完成式</strong>（經驗、已經完成、持續）</li>
               <li><strong>其他進階時態</strong>（會考進階與高中預備）</li>
             </ul>
           </div>
@@ -1328,16 +1259,12 @@
         <svg class="map-wax-seal" width="66" height="66" viewBox="0 0 80 80">
           <defs>
             <radialGradient id="waxGrad" cx="35%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#d63838"/>
-              <stop offset="65%" stop-color="#8f1818"/>
-              <stop offset="100%" stop-color="#4d0808"/>
+              <stop offset="0%" stop-color="#d63838"/><stop offset="65%" stop-color="#8f1818"/><stop offset="100%" stop-color="#4d0808"/>
             </radialGradient>
           </defs>
           <path d="M40 6 C50 4, 58 12, 66 15 C73 19, 76 30, 74 40 C76 52, 68 62, 60 68 C50 75, 34 76, 24 70 C13 65, 6 52, 8 40 C6 28, 14 17, 23 12 C30 7, 34 7, 40 6 Z" fill="url(#waxGrad)"/>
           <circle cx="40" cy="40" r="22" fill="none" stroke="#5c0a0a" stroke-width="2.5"/>
-          <circle cx="40" cy="40" r="19" fill="none" stroke="#e06060" stroke-width="1" opacity="0.5"/>
           <text x="40" y="47" font-size="22" font-weight="bold" font-family="serif" fill="#470707" text-anchor="middle">H</text>
-          <text x="39" y="46" font-size="22" font-weight="bold" font-family="serif" fill="#f08080" opacity="0.6" text-anchor="middle">H</text>
         </svg>
       </div>
     </section>
@@ -1346,7 +1273,7 @@
     <section id="map" class="section">
       <div class="card">
         <div class="map-top-bar" id="map-top-anchor">
-          <h2 class="sec-title" style="margin-bottom:0;">⏳ 點擊時態卡片，看動態時間軸與魔法例句！</h2>
+          <h2 class="sec-title" style="margin-bottom:0;">⏳ 點擊時態卡片賺積分，並點單字看翻譯！</h2>
           <div class="filter-bar">
             <span style="font-weight:700; font-size:0.85rem;">篩選：</span>
             <button class="filter-chip active" onclick="filterGrade('all', this)">全部 12 個</button>
@@ -1376,7 +1303,6 @@
             </table>
           </div>
 
-          <!-- Dynamic Detail Panel -->
           <div class="detail-panel" id="detail-panel">
             <div id="dt-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
               <div>
@@ -1395,35 +1321,36 @@
               <div id="timeline-caption" style="font-size:0.84rem; color:#495057; font-weight:600; margin-top:4px;"></div>
             </div>
 
-            <div id="dt-body">
-              <div class="formula-pill" id="dt-formula">V / V-s(es)</div>
-              <p id="dt-usage" style="margin:6px 0; font-size:0.92rem;"></p>
+            <div class="formula-pill" id="dt-formula">V / V-s(es)</div>
+            <p id="dt-usage" style="margin:6px 0; font-size:0.92rem;"></p>
 
-              <div style="margin-top:8px;">
-                <strong style="font-size:0.85rem;">🔑 常見時間關鍵字：</strong>
-                <div class="keywords-list" id="dt-keywords"></div>
-              </div>
+            <div class="daily-life-box" id="dt-daily"></div>
 
-              <div class="example-box">
-                <svg width="62" height="62" viewBox="0 0 70 70" style="flex-shrink:0;">
-                  <defs>
-                    <radialGradient id="snitchEx" cx="35%" cy="30%" r="70%">
-                      <stop offset="0%" stop-color="#fff8d6"/>
-                      <stop offset="45%" stop-color="#e8b931"/>
-                      <stop offset="100%" stop-color="#7d5609"/>
-                    </radialGradient>
-                  </defs>
-                  <circle cx="35" cy="35" r="32" fill="#24304a"/>
-                  <path class="snitch-flap-l" d="M26 35 C14 20, 4 22, 2 28 C10 32, 18 35, 25 38 Z" fill="#e6f2ff" opacity="0.9"/>
-                  <path class="snitch-flap-r" d="M44 35 C56 20, 66 22, 68 28 C60 32, 52 35, 45 38 Z" fill="#e6f2ff" opacity="0.9"/>
-                  <circle cx="35" cy="38" r="12" fill="url(#snitchEx)" stroke="#5c3e04" stroke-width="1"/>
-                  <path d="M25 35 Q35 41 45 35" fill="none" stroke="#7d5609" stroke-width="1"/>
-                  <path d="M35 12 L37 16 L41 18 L37 20 L35 24 L33 20 L29 18 L33 16 Z" fill="#ffe875" class="candle-flicker"/>
-                </svg>
-                <div style="flex:1;">
-                  <div style="font-size:1rem; font-weight:600;" id="dt-ex-en"></div>
-                  <div style="font-size:0.86rem; color:var(--muted); margin-top:3px;" id="dt-ex-zh"></div>
-                  <button class="speak-btn" onclick="speakCurrentExample()">🔊 聽老師唸魔法例句</button>
+            <div style="margin-top:8px;">
+              <strong style="font-size:0.85rem;">🔑 常見時間關鍵字：</strong>
+              <div class="keywords-list" id="dt-keywords"></div>
+            </div>
+
+            <div class="example-box">
+              <svg width="58" height="58" viewBox="0 0 70 70" style="flex-shrink:0;">
+                <defs>
+                  <radialGradient id="snitchEx" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#fff8d6"/><stop offset="45%" stop-color="#e8b931"/><stop offset="100%" stop-color="#7d5609"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="35" cy="35" r="32" fill="#24304a"/>
+                <path class="snitch-flap-l" d="M26 35 C14 20, 4 22, 2 28 C10 32, 18 35, 25 38 Z" fill="#e6f2ff" opacity="0.9"/>
+                <path class="snitch-flap-r" d="M44 35 C56 20, 66 22, 68 28 C60 32, 52 35, 45 38 Z" fill="#e6f2ff" opacity="0.9"/>
+                <circle cx="35" cy="38" r="12" fill="url(#snitchEx)" stroke="#5c3e04" stroke-width="1"/>
+                <path d="M35 12 L37 16 L41 18 L37 20 L35 24 L33 20 L29 18 L33 16 Z" fill="#ffe875" class="candle-flicker"/>
+              </svg>
+              <div style="flex:1;">
+                <div style="font-size:0.74rem; color:#2a9d8f; font-weight:700; margin-bottom:2px;">👆 點擊虛線單字可看翻譯與發音</div>
+                <div style="font-size:1rem; font-weight:600;" id="dt-ex-en"></div>
+                <div style="font-size:0.86rem; color:var(--muted); margin-top:3px;" id="dt-ex-zh"></div>
+                <div class="speak-row">
+                  <button class="speak-btn" onclick="speakCurrentExample(0.9)">🔊 正常唸</button>
+                  <button class="speak-btn slow" onclick="speakCurrentExample(0.62)">🐢 烏龜慢速唸</button>
                 </div>
               </div>
             </div>
@@ -1434,20 +1361,23 @@
       </div>
     </section>
 
-    <!-- SECTION 3: INTERACTIVE SENTENCE LAB -->
+    <!-- SECTION 3: FUNNY SENTENCE BUILDER LAB -->
     <section id="lab" class="section">
       <div class="card">
-        <h2 class="sec-title">🧪 MahiMahi好吃實驗室：霍格華茲巧克力蛙點心時間！</h2>
+        <h2 class="sec-title">🧪 MahiMahi好吃實驗室：搞笑魔法造句機！</h2>
         <div class="teacher-tip">
-          歡迎來到 <strong>MahiMahi好吃實驗室（魔法分院）</strong>！試著切換不同的「巫師主角」、「時間」跟「狀態」，觀察<strong>霍格華茲動態場景</strong>跟<strong>英文動詞</strong>怎麼施法變身！
+          試著自己組合主角、時態、神奇食物和地點，或是按下「<strong>🎲 隨機搞笑魔法造句</strong>」！笑出來之後，文法就記住囉！（組合 3 次就能解鎖榮恩卡！）
         </div>
+
+        <button class="dice-btn" onclick="randomizeLab()">🎲 隨機搞笑魔法造句！</button>
 
         <div class="builder-controls">
           <div class="control-group">
-            <label>1. 誰要吃巧克力蛙？(主詞)</label>
+            <label>1. 誰？(主詞)</label>
             <div class="btn-group" id="lab-subj">
               <button class="opt-btn active" onclick="setLab('subj', 'I', this)">I (我)</button>
               <button class="opt-btn" onclick="setLab('subj', 'Hermione', this)">Hermione (妙麗-三單)</button>
+              <button class="opt-btn" onclick="setLab('subj', 'Dobby', this)">Dobby (多比-三單)</button>
               <button class="opt-btn" onclick="setLab('subj', 'They', this)">They (哈利與榮恩)</button>
             </div>
           </div>
@@ -1462,12 +1392,32 @@
           </div>
 
           <div class="control-group">
-            <label>3. 動作的狀態？(狀態)</label>
+            <label>3. 動作狀態？(狀態)</label>
             <div class="btn-group" id="lab-aspect">
               <button class="opt-btn active" onclick="setLab('aspect', 'simple', this)">簡單 (習慣)</button>
               <button class="opt-btn" onclick="setLab('aspect', 'cont', this)">進行 (正在吃)</button>
               <button class="opt-btn" onclick="setLab('aspect', 'perf', this)">完成 (已吃完)</button>
               <button class="opt-btn" onclick="setLab('aspect', 'perfCont', this)">完成進行 (一直吃)</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>4. 吃什麼奇怪美食？</label>
+            <div class="btn-group" id="lab-food">
+              <button class="opt-btn active" onclick="setLab('food', 'frogs', this)">🐸 巧克力蛙</button>
+              <button class="opt-btn" onclick="setLab('food', 'mahi', this)">🐟 MahiMahi魚排堡</button>
+              <button class="opt-btn" onclick="setLab('food', 'beans', this)">🫘 柏蒂怪味豆</button>
+              <button class="opt-btn" onclick="setLab('food', 'cakes', this)">🧁 大釜蛋糕</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>5. 在哪裡吃？(地點)</label>
+            <div class="btn-group" id="lab-place">
+              <button class="opt-btn active" onclick="setLab('place', 'hogwarts', this)">🏰 在霍格華茲</button>
+              <button class="opt-btn" onclick="setLab('place', 'broom', this)">🧹 在掃帚上</button>
+              <button class="opt-btn" onclick="setLab('place', 'hat', this)">🎩 在分類帽底下</button>
+              <button class="opt-btn" onclick="setLab('place', 'snape', this)">⚗️ 在石內卜課堂上</button>
             </div>
           </div>
         </div>
@@ -1479,11 +1429,13 @@
 
           <div class="lab-text-box" id="lab-text-box">
             <div id="lab-tense-label" style="font-weight:700; color:#5c3d6e; font-size:0.95rem;">現在簡單式 (Present Simple)</div>
-            <div class="lab-sentence" id="lab-en">I <span class="hl-verb">eat</span> Chocolate Frogs every weekend.</div>
-            <div class="lab-zh" id="lab-zh">我每個週末都吃巧克力蛙。</div>
+            <div class="lab-sentence" id="lab-en">I <span class="hl-verb">eat</span> Chocolate Frogs at Hogwarts every weekend.</div>
+            <div class="lab-zh" id="lab-zh">我每個週末都在霍格華茲吃巧克力蛙。</div>
             <div id="lab-tip" style="font-size:0.86rem; color:#495057; background:#fff; border:1px solid #dfd1bd; display:inline-block; padding:6px 12px; border-radius:10px; margin-bottom:10px;"></div>
-            <br>
-            <button class="speak-btn" onclick="speakText(document.getElementById('lab-en').innerText)">🔊 唸出這個魔法句子</button>
+            <div class="speak-row" style="justify-content:center;">
+              <button class="speak-btn" onclick="speakText(document.getElementById('lab-en').innerText, 0.9)">🔊 正常唸</button>
+              <button class="speak-btn slow" onclick="speakText(document.getElementById('lab-en').innerText, 0.62)">🐢 烏龜慢速唸</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1494,13 +1446,10 @@
       <div class="card">
         <h2 class="sec-title">🦉 霍格華茲時間偵探大挑戰</h2>
         <div class="teacher-bubble-wrap">
-          <svg width="78" height="78" viewBox="0 0 90 90" style="flex-shrink:0;">
+          <svg width="76" height="76" viewBox="0 0 90 90" style="flex-shrink:0;">
             <defs>
               <radialGradient id="crystalBall" cx="35%" cy="30%" r="65%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="25%" stop-color="#a8e6ff"/>
-                <stop offset="75%" stop-color="#3d6cb9"/>
-                <stop offset="100%" stop-color="#1b2a4a"/>
+                <stop offset="0%" stop-color="#ffffff"/><stop offset="25%" stop-color="#a8e6ff"/><stop offset="75%" stop-color="#3d6cb9"/><stop offset="100%" stop-color="#1b2a4a"/>
               </radialGradient>
             </defs>
             <path d="M26 74 L64 74 L58 62 L32 62 Z" fill="#8f6224" stroke="#472d0b" stroke-width="1.5"/>
@@ -1509,17 +1458,19 @@
             <path d="M32 45 Q45 36 58 45 Q45 54 32 45 Z" fill="rgba(255,255,255,0.3)" class="candle-flicker"/>
           </svg>
           <div class="teacher-tip" style="margin-bottom:0;">
-            <strong>魔法偵探密技：</strong> 看到英文考題先別怕黑魔法！透過預言水晶球找出句子裡的<strong>「時間線索字」</strong>（例如 <em>yesterday, now, every day, since</em>），就能秒殺答案！
+            <strong>魔法偵探密技：</strong> 題目裡看不懂的字可以<strong>點一下看中文</strong>；卡住了還可以點<strong>「🔍 找時間線索字」</strong>偷看提示喔！
           </div>
         </div>
 
         <div class="quiz-header">
           <span id="q-progress">第 1 題 / 共 8 題</span>
-          <span id="q-score">目前得分：0</span>
+          <span id="q-score">答對：0 題</span>
         </div>
 
         <div id="quiz-area">
           <div class="quiz-q" id="q-text">Loading...</div>
+          <button class="hint-btn" id="q-hint-btn" onclick="showClueHint()">🔍 老師提示：找出時間線索字</button>
+          <div id="q-hint-msg" style="display:none; font-size:0.88rem; color:#7a5c00; background:#fff9db; padding:8px 12px; border-radius:10px; margin-bottom:12px;"></div>
           <div class="quiz-options" id="q-options"></div>
           <div class="quiz-feedback" id="q-feedback"></div>
           <button class="next-btn" id="q-next" style="display:none;" onclick="nextQuestion()">下一題 ➡️</button>
@@ -1529,18 +1480,16 @@
           <svg width="96" height="96" viewBox="0 0 100 100" style="margin-bottom:8px;" class="svg-pop-point">
             <defs>
               <radialGradient id="winWax" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#e64545"/>
-                <stop offset="65%" stop-color="#9e1919"/>
-                <stop offset="100%" stop-color="#4d0808"/>
+                <stop offset="0%" stop-color="#e64545"/><stop offset="65%" stop-color="#9e1919"/><stop offset="100%" stop-color="#4d0808"/>
               </radialGradient>
             </defs>
             <path d="M50 8 C62 6, 72 15, 82 20 C90 25, 92 38, 90 50 C92 64, 83 78, 72 85 C60 93, 40 94, 28 86 C16 80, 8 65, 10 50 C8 35, 17 22, 28 16 C37 10, 42 9, 50 8 Z" fill="url(#winWax)"/>
             <circle cx="50" cy="50" r="28" fill="none" stroke="#5c0a0a" stroke-width="3"/>
-            <text x="50" y="57" font-size="22" font-weight="bold" font-family="serif" fill="#ffe394" text-anchor="middle">100!</text>
+            <text id="wax-score-txt" x="50" y="57" font-size="22" font-weight="bold" font-family="serif" fill="#ffe394" text-anchor="middle">100!</text>
           </svg>
-          <h3 style="font-size:1.4rem; margin-bottom:8px;">🎉 挑戰完成！葛來分多獲得學院盃！</h3>
-          <p id="final-score-text" style="font-size:1.15rem; margin-bottom:14px;"></p>
-          <button class="next-btn" onclick="restartQuiz()">再挑戰一次 🔄</button>
+          <h3 id="result-title" style="font-size:1.38rem; margin-bottom:8px;">🎉 挑戰完成！</h3>
+          <p id="final-score-text" style="font-size:1.1rem; margin-bottom:14px;"></p>
+          <div id="result-actions"></div>
         </div>
       </div>
     </section>
@@ -1548,75 +1497,276 @@
 
   <script>
     // ========================
-    // 1. TENSE DATA (HARRY POTTER EDITION)
+    // 0. GAME STATE, LOCALSTORAGE & WEB AUDIO MAGIC SOUNDS
+    // ========================
+    const DEFAULT_STATE = {
+      house: '',
+      points: 0,
+      sound: true,
+      visitedTenses: [],
+      labPlays: 0,
+      quizPerfect: false,
+      cards: []
+    };
+
+    let gameState = { ...DEFAULT_STATE };
+    try {
+      const saved = localStorage.getItem('mahimahi_hp_v2');
+      if (saved) gameState = { ...DEFAULT_STATE, ...JSON.parse(saved) };
+    } catch (e) {}
+
+    function saveState() {
+      try { localStorage.setItem('mahimahi_hp_v2', JSON.stringify(gameState)); } catch (e) {}
+      renderStatus();
+      renderAlbum();
+    }
+
+    let audioCtx = null;
+    function playSound(type) {
+      if (!gameState.sound) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+
+        const playNote = (freq, start, dur, wave = 'sine', vol = 0.12) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = wave;
+          osc.frequency.setValueAtTime(freq, start);
+          gain.gain.setValueAtTime(vol, start);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(start);
+          osc.stop(start + dur);
+        };
+
+        if (type === 'click') {
+          playNote(660, now, 0.12, 'triangle', 0.08);
+          playNote(880, now + 0.05, 0.15, 'sine', 0.07);
+        } else if (type === 'correct') {
+          playNote(523.25, now, 0.14, 'triangle', 0.12);
+          playNote(659.25, now + 0.09, 0.14, 'triangle', 0.12);
+          playNote(783.99, now + 0.18, 0.25, 'sine', 0.14);
+        } else if (type === 'wrong') {
+          playNote(300, now, 0.15, 'sine', 0.1);
+          playNote(230, now + 0.12, 0.22, 'sine', 0.09);
+        } else if (type === 'unlock') {
+          [523, 659, 784, 1046].forEach((f, i) => playNote(f, now + i * 0.09, 0.3, 'triangle', 0.13));
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      gameState.sound = !gameState.sound;
+      if (gameState.sound) playSound('click');
+      saveState();
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const t = document.getElementById('magic-toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function addPoints(pts, reason = '') {
+      gameState.points += pts;
+      saveState();
+      if (reason) showToast(`✨ ${reason} (+${pts} 學院分)`);
+    }
+
+    function openHouseModal() {
+      document.getElementById('house-modal').classList.add('show');
+    }
+
+    function chooseHouse(houseName) {
+      gameState.house = houseName;
+      document.getElementById('house-modal').classList.remove('show');
+      playSound('unlock');
+      saveState();
+      showToast(`🎩 分類帽大喊：「${houseName}！」`);
+    }
+
+    function renderStatus() {
+      document.getElementById('house-pill').textContent = gameState.house || '🎩 選擇學院';
+      document.getElementById('points-pill').textContent = `🏆 積分：${gameState.points}`;
+      document.getElementById('cards-pill').textContent = `🃏 巫師卡：${gameState.cards.length}/4`;
+      document.getElementById('sound-pill').textContent = gameState.sound ? '🔊 魔法音效：開' : '🔇 靜音中';
+    }
+
+    const CARDS_META = [
+      { id: 'g1', icon: '📚', title: '妙麗的魔法筆記卡', desc: '看懂國一 2 個基礎時態即可解鎖' },
+      { id: 'g2', icon: '🧹', title: '哈利的飛天掃帚卡', desc: '看懂國二 3 個核心時態即可解鎖' },
+      { id: 'lab', icon: '🐸', title: '榮恩的巧克力蛙卡', desc: '在好吃實驗室造句 3 次即可解鎖' },
+      { id: 'quiz', icon: '🏆', title: '鄧不利多的金探子卡', desc: '時間偵探測驗拿到 100 分解鎖' }
+    ];
+
+    function unlockCard(cardId) {
+      if (!gameState.cards.includes(cardId)) {
+        gameState.cards.push(cardId);
+        gameState.points += 30;
+        saveState();
+        playSound('unlock');
+        launchConfetti();
+        const meta = CARDS_META.find(c => c.id === cardId);
+        showToast(`🃏 解鎖新巫師卡：【${meta.title}】(+30分!)`);
+      }
+    }
+
+    function renderAlbum() {
+      const box = document.getElementById('cards-album');
+      box.innerHTML = CARDS_META.map(c => {
+        const has = gameState.cards.includes(c.id);
+        return `
+          <div class="frog-card ${has ? 'unlocked' : ''}">
+            <span class="fc-icon">${has ? c.icon : '🔒'}</span>
+            <span class="fc-title">${has ? c.title : '??? 未解鎖巫師卡'}</span>
+            <div class="fc-desc">${has ? '✨ 已收集進霍格華茲卡冊！' : c.desc}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Confetti Celebration
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const pieces = Array.from({ length: 75 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height * 0.4,
+        w: 7 + Math.random() * 6,
+        h: 7 + Math.random() * 6,
+        vy: 2.5 + Math.random() * 4,
+        vx: (Math.random() - 0.5) * 3,
+        rot: Math.random() * 360,
+        color: ['#ffd166', '#e76f51', '#2a9d8f', '#a8dadc', '#ff9ebb'][Math.floor(Math.random() * 5)]
+      }));
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += 4;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        frame++;
+        if (frame < 110) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      draw();
+    }
+
+    // Safe Tap-to-translate Popover
+    let currentPopoverWord = '';
+    function w(word, zh) {
+      return `<span class="tap-word" onclick="showWordTip(this, event, '${zh.replace(/'/g, "\\'")}')">${word}</span>`;
+    }
+
+    function showWordTip(el, e, zh) {
+      e.stopPropagation();
+      playSound('click');
+      currentPopoverWord = el.innerText;
+      const pop = document.getElementById('word-popover');
+      document.getElementById('popover-text').innerHTML = `<strong>${currentPopoverWord}</strong>：${zh}`;
+      pop.style.display = 'flex';
+      const rect = el.getBoundingClientRect();
+      const top = Math.max(10, rect.top - 46);
+      const left = Math.min(window.innerWidth - 260, Math.max(10, rect.left));
+      pop.style.top = top + 'px';
+      pop.style.left = left + 'px';
+    }
+
+    function speakPopoverWord() {
+      if (currentPopoverWord) speakText(currentPopoverWord, 0.8);
+    }
+
+    document.getElementById('word-popover').addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', () => {
+      document.getElementById('word-popover').style.display = 'none';
+    });
+
+    // ========================
+    // 1. TENSE DATA
     // ========================
     const TENSES = {
       past_simple: {
         id: 'past_simple', name: '過去簡單式', en: 'Past Simple',
         time: 'past', aspect: 'simple', grade: 'g2', gradeLabel: '國二',
         formula: 'V-ed 或 不規則過去式 (buy → bought)',
-        usage: '描述「過去某個時間點」發生並已經結束的魔法冒險。',
+        usage: '描述「過去某個時間點」發生並已經結束的事。',
+        daily: '💬 生活比喻：就像「我昨天買了一杯珍奶」，事情發生完就結束了！',
         keywords: ['yesterday', 'last night', '...ago', 'this morning'],
-        exEn: 'Harry <span class="hl-verb">bought</span> a magic wand at Ollivanders yesterday.',
+        exEn: `Harry <span class="hl-verb">bought</span> a ${w('magic wand', '魔法杖')} at ${w('Ollivanders', '奧利凡德魔杖店')} ${w('yesterday', '昨天')}.`,
         exZh: '哈利昨天在奧利凡德魔杖店買了一根魔杖。',
-        svgType: 'point-past',
-        svgCap: '動作在「過去」的某一點發生並結束了。'
+        svgType: 'point-past', svgCap: '動作在「過去」的某一點發生並結束了。'
       },
       present_simple: {
         id: 'present_simple', name: '現在簡單式', en: 'Present Simple',
         time: 'present', aspect: 'simple', grade: 'g1', gradeLabel: '國一',
-        formula: 'V / 三單 V-s(es) (助動詞 do/does)',
-        usage: '用來講「平常習慣」、「經常發生的事」或「不變的魔法事實」。',
+        formula: 'V / 三單 V-s(es) (He / She / 單人 +s)',
+        usage: '用來講「平常習慣」、「經常發生的事」或「不變的事實」。',
+        daily: '💬 生活比喻：He/She 只有一個人很孤單，所以後面的動詞要帶一個「s 小夥伴」陪他！',
         keywords: ['every day', 'every weekend', 'always', 'usually'],
-        exEn: 'Hermione <span class="hl-verb">studies</span> magic at Hogwarts every day.',
+        exEn: `Hermione <span class="hl-verb">studies</span> ${w('magic', '魔法')} at ${w('Hogwarts', '霍格華茲')} ${w('every day', '每天')}.`,
         exZh: '妙麗每天都在霍格華茲學魔法。（主詞是三單，study 要去 y + ies！）',
-        svgType: 'habit',
-        svgCap: '過去、現在、未來都重複發生的「習慣」。'
+        svgType: 'habit', svgCap: '過去、現在、未來都重複發生的「習慣」。'
       },
       future_simple: {
         id: 'future_simple', name: '未來簡單式', en: 'Future Simple',
         time: 'future', aspect: 'simple', grade: 'g2', gradeLabel: '國二',
         formula: 'will + 原形動詞 (或 be going to + 原形動詞)',
-        usage: '描述「未來」將會發生、或是打算去做的魔法計畫。',
+        usage: '描述「未來」將會發生、或是打算去做的計畫。',
+        daily: '💬 生活比喻：就像你計畫「明天放學我要去打電動」，用 will 後面記得變回原形！',
         keywords: ['tomorrow', 'next week', 'soon', 'in 2 days'],
-        exEn: 'Harry <span class="hl-verb">will play</span> Quidditch tomorrow.',
+        exEn: `Harry <span class="hl-verb">will play</span> ${w('Quidditch', '魁地奇球賽')} ${w('tomorrow', '明天')}.`,
         exZh: '哈利明天將會去打魁地奇比賽。',
-        svgType: 'point-future',
-        svgCap: '動作將在「未來」的某個時間點發生。'
+        svgType: 'point-future', svgCap: '動作將在「未來」的某個時間點發生。'
       },
 
       past_cont: {
         id: 'past_cont', name: '過去進行式', en: 'Past Continuous',
         time: 'past', aspect: 'cont', grade: 'g2', gradeLabel: '國二',
         formula: 'was / were + V-ing',
-        usage: '強調「過去某個時刻」或「另一件事發生時」，巫師正在做某事。',
+        usage: '強調「過去某個時刻」或「另一件事發生時」，正在做某事。',
+        daily: '💬 生活比喻：就像「昨天媽媽突然開你房門時，你『正在』偷滑手機（was playing）」！',
         keywords: ['at 8 p.m. last night', 'when + 過去式', 'while'],
-        exEn: 'Ron <span class="hl-verb">was eating</span> Chocolate Frogs when the owl arrived.',
+        exEn: `Ron <span class="hl-verb">was eating</span> ${w('Chocolate Frogs', '巧克力蛙')} when the ${w('owl', '貓頭鷹')} ${w('arrived', '抵達')}.`,
         exZh: '貓頭鷹送信飛來的那一刻，榮恩正在吃巧克力蛙。',
-        svgType: 'arc-past',
-        svgCap: '過去某一段時間正在持續進行，突然發生了另一件事。'
+        svgType: 'arc-past', svgCap: '過去某一段時間正在持續進行，突然發生了另一件事。'
       },
       present_cont: {
         id: 'present_cont', name: '現在進行式', en: 'Present Continuous',
         time: 'present', aspect: 'cont', grade: 'g1', gradeLabel: '國一',
         formula: 'am / is / are + V-ing',
         usage: '描述「此時此刻、現在正在進行」的動作。',
+        daily: '💬 生活比喻：朋友打電話問你在幹嘛，你回答「我正在吃雞排啦！」就是進行式！',
         keywords: ['now', 'right now', 'at the moment', 'Look! / Listen!'],
-        exEn: 'Harry <span class="hl-verb">is flying</span> on his Nimbus 2000 right now.',
+        exEn: `Harry <span class="hl-verb">is flying</span> on his ${w('Nimbus 2000', '光輪兩千飛天掃帚')} ${w('right now', '就在此刻')}.`,
         exZh: '哈利現在正騎著光輪兩千飛在空中！',
-        svgType: 'arc-now',
-        svgCap: '橫跨「現在」這個時間點，動作正在發生中！'
+        svgType: 'arc-now', svgCap: '橫跨「現在」這個時間點，動作正在發生中！'
       },
       future_cont: {
         id: 'future_cont', name: '未來進行式', en: 'Future Continuous',
         time: 'future', aspect: 'cont', grade: 'adv', gradeLabel: '進階',
         formula: 'will be + V-ing',
         usage: '想像「未來的某個時間點」，大家正在做什麼事。',
+        daily: '💬 生活比喻：想像「明天晚上八點，我會『正在』看喜歡的動漫」！',
         keywords: ['at 6 p.m. tomorrow', 'this time next week'],
-        exEn: 'They <span class="hl-verb">will be drinking</span> Butterbeer at Hogsmeade at 6 PM tomorrow.',
+        exEn: `They <span class="hl-verb">will be drinking</span> ${w('Butterbeer', '奶油啤酒')} at ${w('Hogsmeade', '活米村')} at 6 PM tomorrow.`,
         exZh: '明天晚上六點的時候，他們會正在活米村喝奶油啤酒。',
-        svgType: 'arc-future',
-        svgCap: '在未來某個特定時刻，動作將會處於「正在進行」的狀態。'
+        svgType: 'arc-future', svgCap: '在未來某個特定時刻，動作將會處於「正在進行」的狀態。'
       },
 
       past_perf: {
@@ -1624,33 +1774,33 @@
         time: 'past', aspect: 'perf', grade: 'adv', gradeLabel: '進階',
         formula: 'had + p.p. (過去分詞)',
         usage: '「比過去更早以前」就已經完成的動作（過去的過去）。',
+        daily: '💬 生活比喻：就像「昨天公車來之前（過去），我就已經跑走了（更早的過去）」！',
         keywords: ['before + 過去式', 'by the time + 過去式', 'already'],
-        exEn: 'Hermione <span class="hl-verb">had</span> already <span class="hl-verb">finished</span> her Potions homework before Snape arrived.',
-        exZh: '在石內卜教授到來前（過去），妙麗早就已經寫完魔藥學作業了（更早的過去）。',
-        svgType: 'perf-past',
-        svgCap: '在過去的某個時間點之前，動作已經完成了！'
+        exEn: `Hermione <span class="hl-verb">had</span> ${w('already', '已經')} <span class="hl-verb">finished</span> her ${w('Potions', '魔藥學')} homework before Snape arrived.`,
+        exZh: '在石內卜教授到來前（過去），妙麗早就已經寫完魔藥學作業了。',
+        svgType: 'perf-past', svgCap: '在過去的某個時間點之前，動作已經完成了！'
       },
       present_perf: {
         id: 'present_perf', name: '現在完成式', en: 'Present Perfect',
         time: 'present', aspect: 'perf', grade: 'g3', gradeLabel: '國三',
         formula: 'have / has + p.p. (過去分詞)',
         usage: '①從過去持續到現在 ②過去經驗 ③到現在已經完成的動作。',
+        daily: '💬 生活比喻：跟媽媽說「我已經寫完功課了（have finished）」，重點是「現在可以去玩了」！',
         keywords: ['since', 'for + 一段時間', 'already', 'yet', 'ever'],
-        exEn: 'I <span class="hl-verb">have drunk</span> three cups of Butterbeer today.',
+        exEn: `I <span class="hl-verb">have drunk</span> three ${w('cups', '杯')} of ${w('Butterbeer', '奶油啤酒')} today.`,
         exZh: '我今天已經喝了三杯奶油啤酒了。（drink - drank - drunk）',
-        svgType: 'perf-now',
-        svgCap: '從過去延伸到「現在」，對現在產生結果或累積經驗。'
+        svgType: 'perf-now', svgCap: '從過去延伸到「現在」，對現在產生結果或累積經驗。'
       },
       future_perf: {
         id: 'future_perf', name: '未來完成式', en: 'Future Perfect',
         time: 'future', aspect: 'perf', grade: 'adv', gradeLabel: '進階',
         formula: 'will have + p.p.',
         usage: '在「未來某個期限之前」，某件事就會已經完成了。',
+        daily: '💬 生活比喻：像立下豪語「明天早上十點前，我一定已經寫完考卷了」！',
         keywords: ['by 5 p.m.', 'by next year', 'by the time...'],
-        exEn: 'Harry <span class="hl-verb">will have caught</span> the Golden Snitch by 5 PM.',
+        exEn: `Harry <span class="hl-verb">will have caught</span> the ${w('Golden Snitch', '金探子')} ${w('by', '在⋯之前')} 5 PM.`,
         exZh: '在下午五點前，哈利將會抓到金探子。（catch - caught - caught）',
-        svgType: 'perf-future',
-        svgCap: '在未來的某個截止時間前，動作會完成。'
+        svgType: 'perf-future', svgCap: '在未來的某個截止時間前，動作會完成。'
       },
 
       past_perf_cont: {
@@ -1658,33 +1808,33 @@
         time: 'past', aspect: 'perfCont', grade: 'adv', gradeLabel: '進階',
         formula: 'had been + V-ing',
         usage: '強調在過去某件事發生前，另一個動作已經「持續進行了一段時間」。',
+        daily: '💬 生活比喻：昨天朋友終於出現前，你已經在太陽下「連續等了」兩小時！',
         keywords: ['for 2 hours before...', 'since'],
-        exEn: 'Dobby <span class="hl-verb">had been waiting</span> for Harry for two hours before he appeared.',
+        exEn: `Dobby <span class="hl-verb">had been waiting</span> for Harry for two hours before he ${w('appeared', '出現')}.`,
         exZh: '在哈利出現之前，多比已經連續等了兩個小時。',
-        svgType: 'perfcont-past',
-        svgCap: '在過去的某時間點前，動作一直持續不斷進行。'
+        svgType: 'perfcont-past', svgCap: '在過去的某時間點前，動作一直持續不斷進行。'
       },
       present_perf_cont: {
         id: 'present_perf_cont', name: '現在完成進行式', en: 'Present Perfect Cont.',
         time: 'present', aspect: 'perfCont', grade: 'adv', gradeLabel: '進階',
         formula: 'have / has been + V-ing',
         usage: '從過去開始一直做到現在，「現在還在做」，強調持續感。',
+        daily: '💬 生活比喻：從中午開始一直打電動打到現在，「手都還沒停下來」！',
         keywords: ['since + 過去時間', 'for + 一段時間', 'all morning'],
-        exEn: 'Ron <span class="hl-verb">has been eating</span> Bertie Bott\'s Beans since lunchtime.',
+        exEn: `Ron <span class="hl-verb">has been eating</span> ${w("Bertie Bott's Beans", '柏蒂全口味豆')} ${w('since', '自從')} ${w('lunchtime', '午餐時間')}.`,
         exZh: '榮恩從午餐時間就一直吃柏蒂全口味豆吃到現在（還沒停！）。',
-        svgType: 'perfcont-now',
-        svgCap: '從過去一路持續到「現在」，而且可能還會繼續下去。'
+        svgType: 'perfcont-now', svgCap: '從過去一路持續到「現在」，而且可能還會繼續下去。'
       },
       future_perf_cont: {
         id: 'future_perf_cont', name: '未來完成進行式', en: 'Future Perfect Cont.',
         time: 'future', aspect: 'perfCont', grade: 'adv', gradeLabel: '進階',
         formula: 'will have been + V-ing',
         usage: '到了未來的某個時間點時，某個動作就已經「連續進行滿多久」了。',
+        daily: '💬 生活比喻：跟同學約「等下看電影看到半夜，我們就已經連續吃爆米花三小時了」！',
         keywords: ['for 3 hours by...', 'by midnight'],
-        exEn: 'By midnight, Harry <span class="hl-verb">will have been reading</span> the Marauder\'s Map for three hours.',
+        exEn: `By ${w('midnight', '半夜')}, Harry <span class="hl-verb">will have been reading</span> the ${w("Marauder's Map", '劫盜地圖')} for three hours.`,
         exZh: '到了半夜，哈利就已經連續看劫盜地圖三個小時了。',
-        svgType: 'perfcont-future',
-        svgCap: '動作一路持續到未來的某個時間點，強調累積的總長度。'
+        svgType: 'perfcont-future', svgCap: '動作一路持續到未來的某個時間點，強調累積的總長度。'
       }
     };
 
@@ -1712,7 +1862,8 @@
         row.cols.forEach(id => {
           const t = TENSES[id];
           const td = document.createElement('td');
-          td.className = `tense-cell ${id === currentTenseId ? 'selected' : ''}`;
+          const isVisited = gameState.visitedTenses.includes(id);
+          td.className = `tense-cell ${id === currentTenseId ? 'selected' : ''} ${isVisited ? 'visited' : ''}`;
           td.dataset.id = id;
           td.dataset.grade = t.grade;
           td.onclick = () => selectTense(id, true);
@@ -1729,12 +1880,26 @@
 
     function selectTense(id, isUserClick = false) {
       currentTenseId = id;
+      if (isUserClick) {
+        playSound('click');
+        if (!gameState.visitedTenses.includes(id)) {
+          gameState.visitedTenses.push(id);
+          addPoints(10, `學會了「${TENSES[id].name}」`);
+          if (['present_simple', 'present_cont'].every(k => gameState.visitedTenses.includes(k))) {
+            unlockCard('g1');
+          }
+          if (['past_simple', 'past_cont', 'future_simple'].every(k => gameState.visitedTenses.includes(k))) {
+            unlockCard('g2');
+          }
+          renderMatrix();
+        }
+      }
+
       document.querySelectorAll('.tense-cell').forEach(el => {
         el.classList.toggle('selected', el.dataset.id === id);
       });
       const t = TENSES[id];
 
-      // Update text content
       document.getElementById('dt-title').textContent = t.name;
       document.getElementById('dt-en').textContent = t.en;
       const badge = document.getElementById('dt-grade');
@@ -1742,8 +1907,8 @@
       badge.className = `grade-tag tag-${t.grade}`;
       document.getElementById('dt-formula').textContent = t.formula;
       document.getElementById('dt-usage').textContent = t.usage;
+      document.getElementById('dt-daily').textContent = t.daily;
 
-      // Staggered keyword badges pop-in
       document.getElementById('dt-keywords').innerHTML = t.keywords
         .map((k, idx) => `<span class="kw-badge" style="animation-delay:${0.18 + idx * 0.08}s">${k}</span>`)
         .join('');
@@ -1752,10 +1917,7 @@
       document.getElementById('dt-ex-zh').textContent = t.exZh;
       document.getElementById('timeline-caption').textContent = t.svgCap;
 
-      // Trigger Dynamic Text Entrance Animations
       triggerTextAnimations();
-
-      // Trigger Dynamic SVG Timeline
       drawTimelineSVG(t.svgType);
 
       if (isUserClick && window.innerWidth <= 980) {
@@ -1768,6 +1930,7 @@
         { el: document.getElementById('dt-header'), cls: 'anim-slide-up' },
         { el: document.getElementById('dt-formula'), cls: 'anim-slide-up anim-delay-1' },
         { el: document.getElementById('dt-usage'), cls: 'anim-slide-up anim-delay-2' },
+        { el: document.getElementById('dt-daily'), cls: 'anim-slide-up anim-delay-2' },
         { el: document.querySelector('.example-box'), cls: 'anim-slide-up anim-delay-3' },
         { el: document.getElementById('timeline-caption'), cls: 'anim-slide-up anim-delay-2' }
       ];
@@ -1779,8 +1942,8 @@
     }
 
     function replayTimeline() {
-      const t = TENSES[currentTenseId];
-      drawTimelineSVG(t.svgType);
+      playSound('click');
+      drawTimelineSVG(TENSES[currentTenseId].svgType);
       triggerTextAnimations();
     }
 
@@ -1790,7 +1953,6 @@
 
     function drawTimelineSVG(type) {
       const svg = document.getElementById('timeline-svg');
-      // Clear first to guarantee animation restart
       svg.innerHTML = '';
 
       let base = `
@@ -1808,110 +1970,135 @@
 
       let shape = '';
       if (type === 'point-past') {
-        shape = `
-          <circle cx="80" cy="75" r="7" fill="none" stroke="#b84232" stroke-width="2.5" class="svg-ripple" />
-          <circle cx="80" cy="75" r="7" fill="#b84232" class="svg-pop-point" />
-          <text x="80" y="54" font-size="16" fill="#b84232" text-anchor="middle" font-weight="bold" class="svg-pop-point">✕</text>
-        `;
+        shape = `<circle cx="80" cy="75" r="7" fill="none" stroke="#b84232" stroke-width="2.5" class="svg-ripple" />
+                 <circle cx="80" cy="75" r="7" fill="#b84232" class="svg-pop-point" />
+                 <text x="80" y="54" font-size="16" fill="#b84232" text-anchor="middle" font-weight="bold" class="svg-pop-point">✕</text>`;
       } else if (type === 'point-future') {
-        shape = `
-          <circle cx="265" cy="75" r="7" fill="none" stroke="#33638a" stroke-width="2.5" class="svg-ripple" />
-          <circle cx="265" cy="75" r="7" fill="#33638a" class="svg-pop-point" />
-          <text x="265" y="54" font-size="16" fill="#33638a" text-anchor="middle" font-weight="bold" class="svg-pop-point">✕</text>
-        `;
+        shape = `<circle cx="265" cy="75" r="7" fill="none" stroke="#33638a" stroke-width="2.5" class="svg-ripple" />
+                 <circle cx="265" cy="75" r="7" fill="#33638a" class="svg-pop-point" />
+                 <text x="265" y="54" font-size="16" fill="#33638a" text-anchor="middle" font-weight="bold" class="svg-pop-point">✕</text>`;
       } else if (type === 'habit') {
         shape = [45, 75, 105, 135, 170, 205, 235, 265].map((x, idx) =>
           `<text x="${x}" y="66" font-size="14" fill="#1f7a6f" text-anchor="middle" font-weight="bold" class="svg-habit-x" style="animation-delay:${idx * 0.12}s">✕</text>`
         ).join('');
       } else if (type === 'arc-past') {
-        shape = `
-          <path id="p-arc-past" d="M 45 75 Q 85 25 125 75" fill="rgba(184,66,50,0.16)" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
-          <circle r="4.5" fill="#ffe875" stroke="#b84232" stroke-width="1.5">
-            <animateMotion dur="1.6s" repeatCount="indefinite" path="M 45 75 Q 85 25 125 75" />
-          </circle>
-          <text x="105" y="64" font-size="15" fill="#c92a2a" font-weight="bold" class="candle-flicker">⚡</text>
-        `;
+        shape = `<path d="M 45 75 Q 85 25 125 75" fill="rgba(184,66,50,0.16)" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle r="4.5" fill="#ffe875" stroke="#b84232" stroke-width="1.5">
+                   <animateMotion dur="1.6s" repeatCount="indefinite" path="M 45 75 Q 85 25 125 75" />
+                 </circle>
+                 <text x="105" y="64" font-size="15" fill="#c92a2a" font-weight="bold" class="candle-flicker">⚡</text>`;
       } else if (type === 'arc-now') {
-        shape = `
-          <path d="M 125 75 Q 170 20 215 75" fill="rgba(31,122,111,0.18)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
-          <circle r="5" fill="#ffe875" stroke="#1f7a6f" stroke-width="1.5">
-            <animateMotion dur="1.6s" repeatCount="indefinite" path="M 125 75 Q 170 20 215 75" />
-          </circle>
-        `;
+        shape = `<path d="M 125 75 Q 170 20 215 75" fill="rgba(31,122,111,0.18)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle r="5" fill="#ffe875" stroke="#1f7a6f" stroke-width="1.5">
+                   <animateMotion dur="1.6s" repeatCount="indefinite" path="M 125 75 Q 170 20 215 75" />
+                 </circle>`;
       } else if (type === 'arc-future') {
-        shape = `
-          <path d="M 225 75 Q 265 25 305 75" fill="rgba(51,99,138,0.18)" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
-          <circle r="4.5" fill="#ffe875" stroke="#33638a" stroke-width="1.5">
-            <animateMotion dur="1.6s" repeatCount="indefinite" path="M 225 75 Q 265 25 305 75" />
-          </circle>
-        `;
+        shape = `<path d="M 225 75 Q 265 25 305 75" fill="rgba(51,99,138,0.18)" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle r="4.5" fill="#ffe875" stroke="#33638a" stroke-width="1.5">
+                   <animateMotion dur="1.6s" repeatCount="indefinite" path="M 225 75 Q 265 25 305 75" />
+                 </circle>`;
       } else if (type === 'perf-past') {
-        shape = `
-          <path d="M 45 75 Q 80 30 115 75" fill="none" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
-          <circle cx="115" cy="75" r="6" fill="none" stroke="#b84232" stroke-width="2" class="svg-ripple" />
-          <circle cx="115" cy="75" r="5.5" fill="#b84232" class="svg-pop-point" style="animation-delay:0.45s" />
-          <line x1="115" y1="45" x2="115" y2="85" stroke="#495057" stroke-width="2" />
-          <text x="65" y="42" font-size="12" fill="#b84232" font-weight="bold" class="svg-pop-point" style="animation-delay:0.35s">先完成</text>
-        `;
+        shape = `<path d="M 45 75 Q 80 30 115 75" fill="none" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle cx="115" cy="75" r="6" fill="none" stroke="#b84232" stroke-width="2" class="svg-ripple" />
+                 <circle cx="115" cy="75" r="5.5" fill="#b84232" class="svg-pop-point" style="animation-delay:0.45s" />
+                 <line x1="115" y1="45" x2="115" y2="85" stroke="#495057" stroke-width="2" />
+                 <text x="65" y="42" font-size="12" fill="#b84232" font-weight="bold" class="svg-pop-point" style="animation-delay:0.35s">先完成</text>`;
       } else if (type === 'perf-now') {
-        shape = `
-          <path d="M 70 75 Q 120 25 170 75" fill="rgba(31,122,111,0.16)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
-          <circle cx="170" cy="75" r="6" fill="none" stroke="#1f7a6f" stroke-width="2" class="svg-ripple" />
-          <circle cx="170" cy="75" r="6" fill="#1f7a6f" class="svg-pop-point" style="animation-delay:0.45s" />
-        `;
+        shape = `<path d="M 70 75 Q 120 25 170 75" fill="rgba(31,122,111,0.16)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle cx="170" cy="75" r="6" fill="none" stroke="#1f7a6f" stroke-width="2" class="svg-ripple" />
+                 <circle cx="170" cy="75" r="6" fill="#1f7a6f" class="svg-pop-point" style="animation-delay:0.45s" />`;
       } else if (type === 'perf-future') {
-        shape = `
-          <path d="M 195 75 Q 235 30 275 75" fill="none" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
-          <circle cx="275" cy="75" r="6" fill="none" stroke="#33638a" stroke-width="2" class="svg-ripple" />
-          <circle cx="275" cy="75" r="6" fill="#33638a" class="svg-pop-point" style="animation-delay:0.45s" />
-          <line x1="275" y1="45" x2="275" y2="85" stroke="#33638a" stroke-width="2" />
-        `;
+        shape = `<path d="M 195 75 Q 235 30 275 75" fill="none" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
+                 <circle cx="275" cy="75" r="6" fill="none" stroke="#33638a" stroke-width="2" class="svg-ripple" />
+                 <circle cx="275" cy="75" r="6" fill="#33638a" class="svg-pop-point" style="animation-delay:0.45s" />
+                 <line x1="275" y1="45" x2="275" y2="85" stroke="#33638a" stroke-width="2" />`;
       } else if (type === 'perfcont-past') {
-        shape = `
-          <path d="M 40 75 Q 85 20 120 75" fill="rgba(184,66,50,0.22)" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
-          <path d="M 120 75 L 148 75" stroke="#b84232" stroke-width="3" class="svg-flow-dash"/>
-        `;
+        shape = `<path d="M 40 75 Q 85 20 120 75" fill="rgba(184,66,50,0.22)" stroke="#b84232" stroke-width="3.2" class="svg-draw-arc" />
+                 <path d="M 120 75 L 148 75" stroke="#b84232" stroke-width="3" class="svg-flow-dash"/>`;
       } else if (type === 'perfcont-now') {
-        shape = `
-          <path d="M 70 75 Q 120 20 170 75" fill="rgba(31,122,111,0.22)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
-          <path d="M 170 75 L 218 75" stroke="#1f7a6f" stroke-width="3" class="svg-flow-dash"/>
-        `;
+        shape = `<path d="M 70 75 Q 120 20 170 75" fill="rgba(31,122,111,0.22)" stroke="#1f7a6f" stroke-width="3.2" class="svg-draw-arc" />
+                 <path d="M 170 75 L 218 75" stroke="#1f7a6f" stroke-width="3" class="svg-flow-dash"/>`;
       } else if (type === 'perfcont-future') {
-        shape = `
-          <path d="M 185 75 Q 235 20 280 75" fill="rgba(51,99,138,0.22)" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
-          <path d="M 280 75 L 308 75" stroke="#33638a" stroke-width="3" class="svg-flow-dash"/>
-          <circle cx="280" cy="75" r="5" fill="#33638a" class="svg-pop-point" style="animation-delay:0.4s" />
-        `;
+        shape = `<path d="M 185 75 Q 235 20 280 75" fill="rgba(51,99,138,0.22)" stroke="#33638a" stroke-width="3.2" class="svg-draw-arc" />
+                 <path d="M 280 75 L 308 75" stroke="#33638a" stroke-width="3" class="svg-flow-dash"/>
+                 <circle cx="280" cy="75" r="5" fill="#33638a" class="svg-pop-point" style="animation-delay:0.4s" />`;
       }
 
       svg.innerHTML = base + shape;
     }
 
     function filterGrade(grade, btn) {
+      playSound('click');
       document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.tense-cell').forEach(cell => {
-        if (grade === 'all' || cell.dataset.grade === grade) {
-          cell.classList.remove('dimmed');
-        } else {
-          cell.classList.add('dimmed');
-        }
+        if (grade === 'all' || cell.dataset.grade === grade) cell.classList.remove('dimmed');
+        else cell.classList.add('dimmed');
       });
     }
 
     // ========================
-    // 3. SENTENCE BUILDER LAB
+    // 3. FUNNY SENTENCE BUILDER LAB
     // ========================
-    const labState = { subj: 'I', time: 'present', aspect: 'simple' };
+    const labState = { subj: 'I', time: 'present', aspect: 'simple', food: 'frogs', place: 'hogwarts' };
+
+    const FOOD_MAP = {
+      frogs: { en: 'Chocolate Frogs', zh: '巧克力蛙', icon: '🐸' },
+      mahi:  { en: 'MahiMahi fish burgers', zh: 'MahiMahi鬼頭刀魚排堡', icon: '🐟' },
+      beans: { en: "Bertie Bott's Beans", zh: '柏蒂全口味怪味豆', icon: '🫘' },
+      cakes: { en: 'Cauldron Cakes', zh: '大釜蛋糕', icon: '🧁' }
+    };
+
+    const PLACE_MAP = {
+      hogwarts: { en: 'at Hogwarts', zh: '在霍格華茲' },
+      broom:    { en: 'on a flying broomstick', zh: '在飛天掃帚上' },
+      hat:      { en: 'under the Sorting Hat', zh: '在分類帽底下' },
+      snape:    { en: "in Snape's class", zh: '在石內卜的課堂上' }
+    };
+
+    function recordLabPlay() {
+      gameState.labPlays = (gameState.labPlays || 0) + 1;
+      if (gameState.labPlays === 3) {
+        unlockCard('lab');
+      } else {
+        saveState();
+      }
+    }
 
     function setLab(key, val, btn) {
+      playSound('click');
       labState[key] = val;
       btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      recordLabPlay();
       updateLab();
     }
 
-    function drawLabScene(subj, time, aspect) {
+    function randomizeLab() {
+      playSound('correct');
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      labState.subj = pick(['I', 'Hermione', 'Dobby', 'They']);
+      labState.time = pick(['past', 'present', 'future']);
+      labState.aspect = pick(['simple', 'cont', 'perf', 'perfCont']);
+      labState.food = pick(['frogs', 'mahi', 'beans', 'cakes']);
+      labState.place = pick(['hogwarts', 'broom', 'hat', 'snape']);
+
+      const syncBtns = (groupId, val, idxMap) => {
+        const btns = document.querySelectorAll(`#${groupId} .opt-btn`);
+        btns.forEach((b, i) => b.classList.toggle('active', idxMap[i] === val));
+      };
+      syncBtns('lab-subj', labState.subj, ['I', 'Hermione', 'Dobby', 'They']);
+      syncBtns('lab-time', labState.time, ['past', 'present', 'future']);
+      syncBtns('lab-aspect', labState.aspect, ['simple', 'cont', 'perf', 'perfCont']);
+      syncBtns('lab-food', labState.food, ['frogs', 'mahi', 'beans', 'cakes']);
+      syncBtns('lab-place', labState.place, ['hogwarts', 'broom', 'hat', 'snape']);
+
+      recordLabPlay();
+      addPoints(5, '創造了搞笑魔法句！');
+      updateLab();
+    }
+
+    function drawLabScene(subj, time, aspect, foodKey) {
       const svg = document.getElementById('lab-scene-svg');
       const timeBadgeColor = { past: '#b84232', present: '#1f7a6f', future: '#33638a' };
       const timeLabels = { past: '過去 ⌛', present: '現在 🪄', future: '未來 🦉' };
@@ -1919,16 +2106,10 @@
       const sceneBg = `
         <defs>
           <radialGradient id="candleGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.85"/>
-            <stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#ffeaa7" stop-opacity="0.85"/><stop offset="100%" stop-color="#ffeaa7" stop-opacity="0"/>
           </radialGradient>
           <linearGradient id="woodTable" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#7a4c28"/>
-            <stop offset="100%" stop-color="#452710"/>
-          </linearGradient>
-          <linearGradient id="frogBox" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#693682"/>
-            <stop offset="100%" stop-color="#3a184d"/>
+            <stop offset="0%" stop-color="#7a4c28"/><stop offset="100%" stop-color="#452710"/>
           </linearGradient>
         </defs>
         <rect x="0" y="0" width="210" height="156" rx="12" fill="${time === 'past' ? '#2c1b29' : (time === 'present' ? '#1a243d' : '#173047')}"/>
@@ -1936,7 +2117,6 @@
         <rect x="38" y="22" width="4" height="14" fill="#fff3d6"/>
         <circle cx="176" cy="22" r="14" fill="url(#candleGlow)" class="candle-flicker"/>
         <rect x="174" y="20" width="4" height="14" fill="#fff3d6"/>
-        <circle cx="110" cy="14" r="1.2" fill="#fff8d6"/><circle cx="148" cy="30" r="1" fill="#fff8d6"/>
         <rect x="10" y="8" width="62" height="20" rx="10" fill="${timeBadgeColor[time]}" stroke="#ffe394" stroke-width="1"/>
         <text x="41" y="22" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">${timeLabels[time]}</text>
         <rect x="0" y="114" width="210" height="42" fill="url(#woodTable)"/>
@@ -1947,15 +2127,13 @@
       if (subj === 'I') {
         charSvg = `
           <g class="svg-pop-point">
-            <path d="M22 114 Q48 78 74 114 Z" fill="#1e222b" stroke="#0f1117" stroke-width="1.5"/>
+            <path d="M22 114 Q48 78 74 114 Z" fill="#1e222b"/>
             <path d="M38 92 L58 92 L54 114 L42 114 Z" fill="#9c1919"/>
-            <line x1="42" y1="98" x2="54" y2="98" stroke="#e8b931" stroke-width="2"/>
             <circle cx="48" cy="68" r="17" fill="#f7d5ba"/>
             <path d="M31 64 Q48 44 65 64 Q60 52 48 52 Q36 52 31 64 Z" fill="#3a281d"/>
             <circle cx="42" cy="68" r="2" fill="#2d2018"/><circle cx="54" cy="68" r="2" fill="#2d2018"/>
             <path d="M44 76 Q48 79 52 76" fill="none" stroke="#8c543e" stroke-width="1.8" stroke-linecap="round"/>
-          </g>
-        `;
+          </g>`;
       } else if (subj === 'Hermione') {
         charSvg = `
           <g class="svg-pop-point">
@@ -1963,56 +2141,58 @@
             <path d="M22 114 Q48 78 74 114 Z" fill="#1e222b"/>
             <path d="M40 92 L56 92 L52 114 L44 114 Z" fill="#9c1919"/>
             <circle cx="48" cy="68" r="16" fill="#f7d5ba"/>
-            <path d="M32 62 Q48 48 64 62" fill="#5e3a1e"/>
             <circle cx="42" cy="68" r="2" fill="#2d2018"/><circle cx="54" cy="68" r="2" fill="#2d2018"/>
             <path d="M44 76 Q48 79 52 76" fill="none" stroke="#a65249" stroke-width="1.8" stroke-linecap="round"/>
-          </g>
-        `;
+          </g>`;
+      } else if (subj === 'Dobby') {
+        charSvg = `
+          <g class="svg-pop-point">
+            <path d="M26 114 Q48 82 70 114 Z" fill="#d8cbb8" stroke="#6e6053" stroke-width="1.2"/>
+            <polygon points="32,66 10,58 28,76" fill="#e6c3a5" stroke="#8c6648" stroke-width="1"/>
+            <polygon points="64,66 86,58 68,76" fill="#e6c3a5" stroke="#8c6648" stroke-width="1"/>
+            <circle cx="48" cy="70" r="15" fill="#e6c3a5"/>
+            <circle cx="42" cy="68" r="4" fill="#52b788"/><circle cx="54" cy="68" r="4" fill="#52b788"/>
+            <circle cx="42" cy="68" r="1.8" fill="#1b1b1b"/><circle cx="54" cy="68" r="1.8" fill="#1b1b1b"/>
+            <path d="M44 78 Q48 81 52 78" fill="none" stroke="#6e4b35" stroke-width="1.6"/>
+          </g>`;
       } else {
         charSvg = `
           <g class="svg-pop-point">
             <path d="M8 114 Q28 84 48 114 Z" fill="#1e222b"/>
             <circle cx="28" cy="74" r="13" fill="#f7d5ba"/>
             <path d="M15 69 Q28 54 41 69" fill="#1f1a17"/>
-            <path d="M28 64 L26 67 L29 67 L27 70" fill="none" stroke="#c92a2a" stroke-width="1.3"/>
             <circle cx="23" cy="74" r="4" fill="none" stroke="#2d2622" stroke-width="1.4"/>
             <circle cx="33" cy="74" r="4" fill="none" stroke="#2d2622" stroke-width="1.4"/>
             <path d="M46 114 Q66 84 86 114 Z" fill="#1e222b"/>
             <circle cx="66" cy="73" r="13" fill="#f7d5ba"/>
             <path d="M53 68 Q66 53 79 68" fill="#c95d28"/>
             <circle cx="62" cy="73" r="1.8" fill="#2d2018"/><circle cx="70" cy="73" r="1.8" fill="#2d2018"/>
-          </g>
-        `;
+          </g>`;
       }
 
+      const foodEmoji = FOOD_MAP[foodKey].icon;
       let propSvg = '';
       if (aspect === 'simple') {
         propSvg = `
-          <polygon points="142,84 176,94 166,120 118,120 108,94" fill="url(#frogBox)" stroke="#e8b931" stroke-width="2"/>
-          <ellipse cx="142" cy="102" rx="14" ry="8" fill="#52321b" stroke="#2b1709" stroke-width="1.2"/>
-          <circle cx="137" cy="98" r="2" fill="#ffd166"/><circle cx="147" cy="98" r="2" fill="#ffd166"/>
-          <rect x="172" y="84" width="22" height="30" rx="3" fill="#c97a28" stroke="#ffe599" stroke-width="1.2"/>
-          <path d="M170 84 Q183 74 196 84 Z" fill="#fff8e7"/>
+          <ellipse cx="145" cy="116" rx="34" ry="9" fill="#f7eed7" stroke="#d4a024" stroke-width="2"/>
+          <text x="145" y="108" font-size="30" text-anchor="middle">${foodEmoji}</text>
         `;
       } else if (aspect === 'cont') {
         propSvg = `
-          <polygon points="142,96 174,104 166,124 118,124 110,104" fill="url(#frogBox)" stroke="#e8b931" stroke-width="1.8"/>
-          <g class="frog-hop">
-            <ellipse cx="145" cy="72" rx="15" ry="9" fill="#5c361d" stroke="#2b1709" stroke-width="1.5"/>
-            <circle cx="138" cy="68" r="2.2" fill="#ffd166"/>
-          </g>
-          <text x="174" y="60" font-size="13" font-weight="bold" fill="#ffe875" class="candle-flicker">ING!</text>
+          <ellipse cx="145" cy="116" rx="34" ry="9" fill="#f7eed7" stroke="#d4a024" stroke-width="2"/>
+          <text x="145" y="92" font-size="30" text-anchor="middle" class="frog-hop">${foodEmoji}</text>
+          <text x="180" y="60" font-size="13" font-weight="bold" fill="#ffe875" class="candle-flicker">ING!</text>
         `;
       } else if (aspect === 'perf') {
         propSvg = `
-          <ellipse cx="142" cy="116" rx="32" ry="9" fill="#f7eed7" stroke="#d4a024" stroke-width="2"/>
-          <polygon points="168,84 188,88 184,114 164,110" fill="#2d3a54" stroke="#e8b931" stroke-width="1.5"/>
-          <circle cx="142" cy="64" r="15" fill="#2a9d8f" stroke="#ffe394" stroke-width="2" class="svg-pop-point"/>
-          <path d="M134 64 L140 70 L150 58" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" class="svg-pop-point"/>
+          <ellipse cx="145" cy="116" rx="34" ry="9" fill="#f7eed7" stroke="#d4a024" stroke-width="2"/>
+          <circle cx="145" cy="68" r="16" fill="#2a9d8f" stroke="#ffe394" stroke-width="2" class="svg-pop-point"/>
+          <path d="M137 68 L143 74 L153 62" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" class="svg-pop-point"/>
         `;
       } else {
         propSvg = `
-          <polygon points="136,92 168,100 160,122 112,122 104,100" fill="url(#frogBox)" stroke="#e8b931" stroke-width="1.8"/>
+          <ellipse cx="142" cy="116" rx="30" ry="9" fill="#f7eed7" stroke="#d4a024" stroke-width="2"/>
+          <text x="142" y="108" font-size="26" text-anchor="middle">${foodEmoji}</text>
           <circle cx="176" cy="70" r="18" fill="rgba(255,255,255,0.12)" stroke="#e8b931" stroke-width="2.5"/>
           <line x1="176" y1="70" x2="176" y2="57" stroke="#ffe875" stroke-width="2.5" stroke-linecap="round" class="clock-spin"/>
           <line x1="176" y1="70" x2="185" y2="70" stroke="#ffe875" stroke-width="2" stroke-linecap="round"/>
@@ -2023,88 +2203,90 @@
     }
 
     function updateLab() {
-      const { subj, time, aspect } = labState;
-      const isThirdSing = subj === 'Hermione';
+      const { subj, time, aspect, food, place } = labState;
+      const isThirdSing = (subj === 'Hermione' || subj === 'Dobby');
       const isI = subj === 'I';
-      const zhSubj = subj === 'I' ? '我' : (subj === 'Hermione' ? '妙麗' : '哈利和榮恩');
+      const zhSubj = subj === 'I' ? '我' : (subj === 'Hermione' ? '妙麗' : (subj === 'Dobby' ? '多比' : '哈利和榮恩'));
+      const f = FOOD_MAP[food];
+      const p = PLACE_MAP[place];
 
       let verb = '', tail = '', zh = '', tenseName = '', tip = '';
 
       if (time === 'present' && aspect === 'simple') {
         tenseName = '現在簡單式 (Present Simple)';
         verb = isThirdSing ? 'eats' : 'eat';
-        tail = 'Chocolate Frogs every weekend.';
-        zh = `${zhSubj}每個週末都吃巧克力蛙。`;
-        tip = isThirdSing ? '💡 因為主詞是 Hermione (第三人稱單數)，現在簡單式的動詞要 +s！' : '💡 講習慣時，用原形動詞就好囉。';
+        tail = `${f.en} ${p.en} every weekend.`;
+        zh = `${zhSubj}每個週末都${p.zh}吃${f.zh}。`;
+        tip = isThirdSing ? `💡 主詞 ${subj} 是第三人稱單數（只有一個人），動詞 eat 要 +s！` : '💡 講平常習慣，用原形動詞就好囉。';
       } else if (time === 'past' && aspect === 'simple') {
         tenseName = '過去簡單式 (Past Simple)';
         verb = 'ate';
-        tail = 'Chocolate Frogs on the Hogwarts Express last night.';
-        zh = `${zhSubj}昨晚在霍格華茲特快車上吃了巧克力蛙。`;
-        tip = '💡 eat 是不規則動詞，過去式會變成 ate（不管主詞是誰都一樣）！';
+        tail = `${f.en} ${p.en} last night.`;
+        zh = `${zhSubj}昨晚${p.zh}吃了${f.zh}。`;
+        tip = '💡 eat 是不規則動詞，過去式變成 ate（不管主詞是誰都一樣）！';
       } else if (time === 'future' && aspect === 'simple') {
         tenseName = '未來簡單式 (Future Simple)';
         verb = 'will eat';
-        tail = 'Chocolate Frogs at Hogsmeade tomorrow.';
-        zh = `${zhSubj}明天將會在活米村吃巧克力蛙。`;
+        tail = `${f.en} ${p.en} tomorrow.`;
+        zh = `${zhSubj}明天將會${p.zh}吃${f.zh}。`;
         tip = '💡 助動詞 will 後面一定要接「原形動詞 eat」！';
       } else if (time === 'present' && aspect === 'cont') {
         tenseName = '現在進行式 (Present Continuous)';
         const be = isI ? 'am' : (isThirdSing ? 'is' : 'are');
         verb = `${be} eating`;
-        tail = 'Chocolate Frogs right now.';
-        zh = `${zhSubj}現在正在吃巧克力蛙。`;
+        tail = `${f.en} ${p.en} right now.`;
+        zh = `${zhSubj}現在正在${p.zh}吃${f.zh}。`;
         tip = `💡 主詞是 ${subj}，要搭配 be 動詞 ${be}，後面動詞加上 ing！`;
       } else if (time === 'past' && aspect === 'cont') {
         tenseName = '過去進行式 (Past Continuous)';
         const be = (isI || isThirdSing) ? 'was' : 'were';
         verb = `${be} eating`;
-        tail = 'Chocolate Frogs at 8 PM last night.';
-        zh = `${zhSubj}昨晚八點正在吃巧克力蛙。`;
-        tip = `💡 過去的 be 動詞：I / Hermione 用 was，They 用 were！`;
+        tail = `${f.en} ${p.en} at 8 PM last night.`;
+        zh = `${zhSubj}昨晚八點正在${p.zh}吃${f.zh}。`;
+        tip = `💡 過去的 be 動詞：單數 ${subj} 用 was，複數 They 用 were！`;
       } else if (time === 'future' && aspect === 'cont') {
         tenseName = '未來進行式 (Future Continuous)';
         verb = 'will be eating';
-        tail = 'Chocolate Frogs at 6 PM tomorrow.';
-        zh = `${zhSubj}明天晚上六點會正在吃巧克力蛙。`;
+        tail = `${f.en} ${p.en} at 6 PM tomorrow.`;
+        zh = `${zhSubj}明天晚上六點會正在${p.zh}吃${f.zh}。`;
         tip = '💡 will 後面要接原形，所以 be 動詞維持原形 be！';
       } else if (time === 'present' && aspect === 'perf') {
         tenseName = '現在完成式 (Present Perfect)';
         const have = isThirdSing ? 'has' : 'have';
         verb = `${have} eaten`;
-        tail = 'three Chocolate Frogs today.';
-        zh = `${zhSubj}今天已經吃了三隻巧克力蛙了。`;
-        tip = `💡 eat 的三態是 eat - ate - eaten。第三人稱單數 ${isThirdSing ? 'Hermione 要用 has' : '不用 has，用 have'}！`;
+        tail = `${f.en} ${p.en} today.`;
+        zh = `${zhSubj}今天已經${p.zh}吃了${f.zh}。`;
+        tip = `💡 eat 三態：eat - ate - eaten。第三人稱單數 ${isThirdSing ? subj + ' 要用 has' : '用 have'}！`;
       } else if (time === 'past' && aspect === 'perf') {
         tenseName = '過去完成式 (Past Perfect)';
         verb = 'had eaten';
-        tail = 'all the Chocolate Frogs before Dumbledore arrived.';
-        zh = `鄧不利多到來前，${zhSubj}早已經把巧克力蛙吃光了。`;
+        tail = `${f.en} ${p.en} before Dumbledore arrived.`;
+        zh = `鄧不利多到來前，${zhSubj}早就已經${p.zh}把${f.zh}吃光了。`;
         tip = '💡 過去完成式最乾脆，所有主詞一律用 had + p.p. (eaten)！';
       } else if (time === 'future' && aspect === 'perf') {
         tenseName = '未來完成式 (Future Perfect)';
         verb = 'will have eaten';
-        tail = 'all the Chocolate Frogs by 9 PM.';
-        zh = `在晚上九點前，${zhSubj}會把所有巧克力蛙吃完。`;
+        tail = `${f.en} ${p.en} by 9 PM.`;
+        zh = `在晚上九點前，${zhSubj}會${p.zh}把所有${f.zh}吃完。`;
         tip = '💡 結合未來 (will) + 完成 (have + eaten)。';
       } else if (time === 'present' && aspect === 'perfCont') {
         tenseName = '現在完成進行式 (Present Perfect Continuous)';
         const have = isThirdSing ? 'has' : 'have';
         verb = `${have} been eating`;
-        tail = 'Chocolate Frogs since lunchtime.';
-        zh = `${zhSubj}從午餐時間就一直吃巧克力蛙到現在。`;
+        tail = `${f.en} ${p.en} since lunchtime.`;
+        zh = `${zhSubj}從午餐時間就一直${p.zh}吃${f.zh}到現在！`;
         tip = '💡 完美結合「完成 (have/has been)」+「進行 (V-ing)」！';
       } else if (time === 'past' && aspect === 'perfCont') {
         tenseName = '過去完成進行式 (Past Perfect Continuous)';
         verb = 'had been eating';
-        tail = 'Chocolate Frogs for 30 minutes before class started.';
-        zh = `在魔藥課開始前，${zhSubj}已經連續吃了 30 分鐘的巧克力蛙。`;
+        tail = `${f.en} ${p.en} for 30 minutes before class started.`;
+        zh = `上課前，${zhSubj}已經連續${p.zh}吃了 30 分鐘的${f.zh}。`;
         tip = '💡 過去持續進行的一段時間，公式：had been + V-ing。';
       } else if (time === 'future' && aspect === 'perfCont') {
         tenseName = '未來完成進行式 (Future Perfect Continuous)';
         verb = 'will have been eating';
-        tail = 'Chocolate Frogs for two hours by 10 PM.';
-        zh = `到了晚上十點，${zhSubj}就已經連續吃兩小時巧克力蛙了。`;
+        tail = `${f.en} ${p.en} for two hours by 10 PM.`;
+        zh = `到了晚上十點，${zhSubj}就已經連續${p.zh}吃兩小時${f.zh}了！`;
         tip = '💡 終極魔王組合：will + have + been + eating！';
       }
 
@@ -2118,73 +2300,86 @@
       void textBox.offsetWidth;
       textBox.classList.add('anim-slide-up');
 
-      drawLabScene(subj, time, aspect);
+      drawLabScene(subj, time, aspect, food);
     }
 
     // ========================
-    // 4. QUIZ ARENA
+    // 4. QUIZ ARENA (CLUE HINT + MISTAKE FIXER)
     // ========================
     const QUESTIONS = [
       {
-        q: '1. Hermione _______ magic books every day. (國一必考)',
+        qHtml: `1. Hermione _______ ${w('magic books', '魔法書')} <span class="clue-target">every day</span>. (國一必考)`,
+        clueMsg: '🔍 線索字是「every day（每天）」！代表每天都會做的習慣，要用哪種時態？',
         opts: ['study', 'studies', 'is studying', 'studied'],
         ans: 1,
-        exp: '線索字是「every day（每天）」，代表妙麗的讀書習慣，要用現在簡單式！因為 Hermione 是第三人稱單數，所以 study 要去 y 加 ies → studies。'
+        exp: '「every day」代表習慣，要用現在簡單式！主詞 Hermione 是第三人稱單數，study 要去 y 加 ies → studies。'
       },
       {
-        q: '2. Look! Harry _______ on his broomstick right now!',
+        qHtml: `2. <span class="clue-target">Look!</span> Harry _______ on his ${w('broomstick', '飛天掃帚')} <span class="clue-target">right now</span>!`,
+        clueMsg: '🔍 線索字是「Look!（看！）」和「right now（就在此刻）」，代表動作正在發生中！',
         opts: ['flies', 'flew', 'is flying', 'will fly'],
         ans: 2,
-        exp: '線索字是「Look!」跟「right now（就在此刻）」，代表哈利現在正在飛，要用現在進行式 (is + V-ing)！'
+        exp: '「Look!」跟「right now」代表哈利此刻「正在」飛，要用現在進行式 (is + V-ing)！'
       },
       {
-        q: '3. Hagrid _______ a big birthday cake to Harry yesterday.',
+        qHtml: `3. Hagrid _______ a big ${w('birthday cake', '生日蛋糕')} to Harry <span class="clue-target">yesterday</span>.`,
+        clueMsg: '🔍 線索字是「yesterday（昨天）」！事情昨天已經發生完囉。',
         opts: ['brings', 'brought', 'is bringing', 'will bring'],
         ans: 1,
-        exp: '線索字是「yesterday（昨天）」，代表過去發生的事，要用過去簡單式。bring（帶來）的過去式是不規則變化：brought！'
+        exp: '「yesterday」要用過去簡單式。bring（帶來）的過去式是不規則變化：brought！'
       },
       {
-        q: '4. We _______ to Hogwarts by train next September.',
+        qHtml: `4. We _______ to Hogwarts by ${w('train', '火車')} <span class="clue-target">next September</span>.`,
+        clueMsg: '🔍 線索字是「next September（明年九月）」！還沒發生的未來計畫喔。',
         opts: ['went', 'go', 'will go', 'are going'],
         ans: 2,
-        exp: '線索字是「next September（明年九月）」，代表還沒發生的未來，要用未來式 will go。'
+        exp: '「next September」代表還沒發生的未來，要用未來式 will go。'
       },
       {
-        q: '5. Ron _______ Chocolate Frogs at 8:00 last night.',
+        qHtml: `5. Ron _______ ${w('Chocolate Frogs', '巧克力蛙')} <span class="clue-target">at 8:00 last night</span>.`,
+        clueMsg: '🔍 看到明確的過去時間點「at 8:00 last night（昨晚八點整）」，強調那時候「正在」吃！',
         opts: ['eats', 'was eating', 'is eating', 'has eaten'],
         ans: 1,
-        exp: '看到明確的過去時間點「last night 的 8:00」，強調昨晚那個時刻榮恩「正在」吃巧克力蛙，要用過去進行式：was eating！'
+        exp: '過去某個特定時刻「正在」進行的動作，要用過去進行式：was eating！'
       },
       {
-        q: '6. I _______ already _______ my Potions homework. Let\'s play wizard chess!',
+        qHtml: `6. I _______ <span class="clue-target">already</span> _______ my ${w('Potions', '魔藥學')} homework. Let's play!`,
+        clueMsg: '🔍 看到「already（已經）」，而且強調現在已經完成、可以去玩了！',
         opts: ['have / finished', 'has / finished', 'am / finishing', 'did / finish'],
         ans: 0,
-        exp: '看到「already（已經）」且強調現在已完成、可以玩巫師棋了，要用現在完成式 (have/has + p.p.)，主詞 I 要搭配 have。'
+        exp: '看到「already」且表示已經完成，要用現在完成式 (have/has + p.p.)，主詞 I 要搭配 have。'
       },
       {
-        q: '7. Harry _______ at Hogwarts since he was eleven years old.',
+        qHtml: `7. Harry _______ at Hogwarts <span class="clue-target">since he was eleven</span>.`,
+        clueMsg: '🔍 看到「since（自從⋯⋯以來）」是國三大魔王線索！代表從過去一直持續到現在。',
         opts: ['lives', 'lived', 'has lived', 'is living'],
         ans: 2,
-        exp: '看到「since（自從⋯⋯以來）」是現在完成式的超級大線索！代表從十一歲一直住到現在，要用 has lived。'
+        exp: '「since」代表從過去一路持續到現在，要用現在完成式 has lived。'
       },
       {
-        q: '8. When Professor McGonagall walked in, the twins _______ a funny joke.',
+        qHtml: `8. <span class="clue-target">When Professor McGonagall walked in</span>, the ${w('twins', '雙胞胎')} _______ a joke.`,
+        clueMsg: '🔍 當教授「走進來的那一刻（過去式 walked）」，雙胞胎當時「正在」講笑話（而且 twins 是兩個人喔）！',
         opts: ['tell', 'were telling', 'are telling', 'will tell'],
         ans: 1,
-        exp: '麥教授走進來的時候（過去式 walked），雙胞胎「正在」講笑話！複數主詞 the twins 的過去進行式要用 were telling。'
+        exp: '一個過去動作發生時，另一個正在進行的動作用過去進行式。twins 是複數，所以用 were telling。'
       }
     ];
 
-    let qIdx = 0;
-    let score = 0;
+    let activeIndices = QUESTIONS.map((_, i) => i);
+    let qPos = 0;
+    let wrongIndices = [];
+    let correctCount = 0;
 
     function loadQuestion() {
-      const q = QUESTIONS[qIdx];
-      document.getElementById('q-progress').textContent = `第 ${qIdx + 1} 題 / 共 ${QUESTIONS.length} 題`;
-      document.getElementById('q-score').textContent = `目前得分：${score}`;
-      document.getElementById('q-text').textContent = q.q;
+      const realIdx = activeIndices[qPos];
+      const q = QUESTIONS[realIdx];
+      document.getElementById('q-progress').textContent = `第 ${qPos + 1} 題 / 共 ${activeIndices.length} 題`;
+      document.getElementById('q-score').textContent = `本輪答對：${correctCount} 題`;
+      document.getElementById('q-text').innerHTML = q.qHtml;
       document.getElementById('q-feedback').style.display = 'none';
       document.getElementById('q-next').style.display = 'none';
+      document.getElementById('q-hint-msg').style.display = 'none';
+      document.getElementById('q-hint-btn').style.display = 'inline-flex';
 
       const optsDiv = document.getElementById('q-options');
       optsDiv.innerHTML = '';
@@ -2197,50 +2392,97 @@
       });
     }
 
+    function showClueHint() {
+      playSound('click');
+      const q = QUESTIONS[activeIndices[qPos]];
+      document.querySelectorAll('#q-text .clue-target').forEach(el => el.classList.add('clue-highlight'));
+      const msg = document.getElementById('q-hint-msg');
+      msg.textContent = q.clueMsg;
+      msg.style.display = 'block';
+      document.getElementById('q-hint-btn').style.display = 'none';
+    }
+
     function checkAnswer(selected, btn) {
-      const q = QUESTIONS[qIdx];
+      const realIdx = activeIndices[qPos];
+      const q = QUESTIONS[realIdx];
       const allBtns = document.querySelectorAll('.quiz-opt');
       allBtns.forEach(b => b.disabled = true);
+      document.getElementById('q-hint-btn').style.display = 'none';
 
       const fb = document.getElementById('q-feedback');
       fb.style.display = 'flex';
 
       if (selected === q.ans) {
         btn.classList.add('correct');
-        score += 12.5;
+        correctCount++;
+        playSound('correct');
+        addPoints(15, '答對魔法測驗');
         fb.style.background = '#d3f9d8';
-        fb.innerHTML = `
-          <div style="font-size:1.6rem;">⚡</div>
-          <div><strong>答對了！葛來分多加分！</strong><br>${q.exp}</div>
-        `;
+        fb.innerHTML = `<div style="font-size:1.6rem;">⚡</div><div><strong>答對了！太棒了！</strong><br>${q.exp}</div>`;
       } else {
         btn.classList.add('wrong');
         allBtns[q.ans].classList.add('correct');
+        if (!wrongIndices.includes(realIdx)) wrongIndices.push(realIdx);
+        playSound('wrong');
         fb.style.background = '#ffe3e3';
-        fb.innerHTML = `
-          <div style="font-size:1.6rem;">💦</div>
-          <div><strong>差一點點！正確答案是「${q.opts[q.ans]}」</strong><br>${q.exp}</div>
-        `;
+        fb.innerHTML = `<div style="font-size:1.6rem;">💦</div><div><strong>差一點點！榮恩上次也選錯 😆 正解是「${q.opts[q.ans]}」</strong><br>${q.exp}</div>`;
       }
 
-      document.getElementById('q-score').textContent = `目前得分：${score}`;
+      document.getElementById('q-score').textContent = `本輪答對：${correctCount} 題`;
       document.getElementById('q-next').style.display = 'inline-block';
     }
 
     function nextQuestion() {
-      qIdx++;
-      if (qIdx < QUESTIONS.length) {
+      qPos++;
+      if (qPos < activeIndices.length) {
         loadQuestion();
       } else {
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('quiz-result').style.display = 'block';
-        document.getElementById('final-score-text').textContent = `你的魔法測驗總分是：${score} 分！（滿分 100 分）`;
+        showQuizResult();
       }
     }
 
+    function showQuizResult() {
+      document.getElementById('quiz-area').style.display = 'none';
+      document.getElementById('quiz-result').style.display = 'block';
+
+      const total = activeIndices.length;
+      const pct = Math.round((correctCount / total) * 100);
+      document.getElementById('wax-score-txt').textContent = `${pct}分`;
+
+      const actDiv = document.getElementById('result-actions');
+      if (wrongIndices.length === 0) {
+        document.getElementById('result-title').textContent = '🎉 完美通關！獲得霍格華茲學院盃！';
+        document.getElementById('final-score-text').textContent = `太強了！全部 ${total} 題 100% 通關！`;
+        launchConfetti();
+        unlockCard('quiz');
+        actDiv.innerHTML = `<button class="next-btn" onclick="restartQuiz()">重新挑戰全部 8 題 🔄</button>`;
+      } else {
+        document.getElementById('result-title').textContent = '🦉 差一步就拿滿分囉！';
+        document.getElementById('final-score-text').textContent = `本輪答對 ${correctCount} / ${total} 題（還有 ${wrongIndices.length} 題小迷糊）。`;
+        actDiv.innerHTML = `
+          <button class="next-btn fix-btn" onclick="retryWrong()">🪄 消滅錯題魔法陣（只重練錯的 ${wrongIndices.length} 題！）</button>
+          <button class="next-btn" onclick="restartQuiz()">全部重頭挑戰 🔄</button>
+        `;
+      }
+    }
+
+    function retryWrong() {
+      playSound('click');
+      activeIndices = [...wrongIndices];
+      wrongIndices = [];
+      qPos = 0;
+      correctCount = 0;
+      document.getElementById('quiz-area').style.display = 'block';
+      document.getElementById('quiz-result').style.display = 'none';
+      loadQuestion();
+    }
+
     function restartQuiz() {
-      qIdx = 0;
-      score = 0;
+      playSound('click');
+      activeIndices = QUESTIONS.map((_, i) => i);
+      wrongIndices = [];
+      qPos = 0;
+      correctCount = 0;
       document.getElementById('quiz-area').style.display = 'block';
       document.getElementById('quiz-result').style.display = 'none';
       loadQuestion();
@@ -2250,38 +2492,43 @@
     // 5. UTILS: TABS & TTS
     // ========================
     function switchTab(tabId, btn) {
+      playSound('click');
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       btn.classList.add('active');
-      if (tabId === 'map') {
-        replayTimeline();
-      }
+      if (tabId === 'map') replayTimeline();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function speakCurrentExample() {
+    function speakCurrentExample(rate = 0.9) {
       const plainText = document.getElementById('dt-ex-en').innerText;
-      speakText(plainText);
+      speakText(plainText, rate);
     }
 
-    function speakText(text) {
+    function speakText(text, rate = 0.9) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'en-US';
-        utter.rate = 0.88;
+        utter.rate = rate;
         window.speechSynthesis.speak(utter);
       } else {
         alert('您的瀏覽器不支援語音發音功能喔！');
       }
     }
 
-    // Init on load
+    // Init
+    renderStatus();
+    renderAlbum();
     renderMatrix();
     selectTense('present_simple', false);
     updateLab();
     loadQuestion();
+
+    if (!gameState.house) {
+      setTimeout(openHouseModal, 450);
+    }
   </script>
 </body>
 </html>
